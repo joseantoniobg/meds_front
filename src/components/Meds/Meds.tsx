@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/auth.context";
 import performRequest from "@/lib/handleRequest";
 import { useEffect, useState } from "react";
 import { toaster } from "../ui/toaster";
-import { Box, Table } from "@chakra-ui/react";
+import { Box, CloseButton, createListCollection, Dialog, Portal, Select, Table, useDialog, useSelect } from "@chakra-ui/react";
 import StForm from "../Form/StForm";
 import StInput from "../Input/StInput";
 import StButton from "../Button/StButton";
@@ -12,6 +12,13 @@ export default function Meds() {
   const [name, setName] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(10);
+
+  const [id, setId] = useState<string>('');
+  const [newName, setNewName] = useState<string>('');
+  const [useMethod, setUseMethod] = useState<string>('');
+
+  const dialog = useDialog();
+
   const [meds, setMeds] = useState<any>({
     content: [],
     totalRecords: 0,
@@ -48,13 +55,77 @@ export default function Meds() {
 
   const columns = ["Nome", "Modo de Uso", "Ações"];
 
+  const useMethods = createListCollection({
+    items: [
+      { label: "USO ORAL", value: "USO ORAL" },
+      { label: "USO TOPICO", value: "USO TOPICO" },
+    ],
+  })
+
+  const useMethodSelect = useSelect({
+    collection: useMethods,
+    onValueChange: (value) => {
+      setUseMethod('');
+    },
+  });
+
   return (
     <Box display={"contents"}
     width={"100%"}>
       <StForm horizontal label="Pesquisar" onClick={() => page != 1 ? setPage(1) : handleRequest()} loading={loading}>
         <StInput id="name" label="Nome" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome do Medicamento" />
       </StForm>
-        <h4 style={{ textAlign: "right", paddingBottom: "20px" }}>Exibindo página {meds.page} - Total: {meds.totalRecords} Medicamentos</h4>
+         <div style={{ display: "flex", marginBottom: "10px", justifyContent: "space-between", alignItems: "center" }}>
+                <Dialog.RootProvider value={dialog}>
+                  <Dialog.Trigger asChild>
+                    <StButton label="Novo Paciente" loading={false} type="button" />
+                  </Dialog.Trigger>
+                  <Portal>
+                    <Dialog.Backdrop />
+                    <Dialog.Positioner>
+                      <Dialog.Content>
+                        <Dialog.Header>
+                          <Dialog.Title>Novo Paciente</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                          <StInput id="mewMed" label="Nome" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nome do Medicamento" />
+                          <Select.RootProvider value={useMethodSelect} size="sm" width="320px">
+                            <Select.HiddenSelect />
+                            <Select.Label>Modo de uso</Select.Label>
+                            <Select.Control>
+                              <Select.Trigger>
+                                <Select.ValueText placeholder="Selecione o modo de uso" />
+                              </Select.Trigger>
+                              <Select.IndicatorGroup>
+                                <Select.Indicator />
+                              </Select.IndicatorGroup>
+                            </Select.Control>
+                            <Portal>
+                              <Select.Positioner>
+                                <Select.Content>
+                                  {useMethods.items.map((um) => (
+                                    <Select.Item item={um} key={um.value}>
+                                      {um.label}
+                                      <Select.ItemIndicator />
+                                    </Select.Item>
+                                  ))}
+                                </Select.Content>
+                              </Select.Positioner>
+                            </Portal>
+                          </Select.RootProvider>
+                        </Dialog.Body>
+                        <Dialog.Footer>
+                          <StButton label="Salvar" loading={loading} onClick={() => handleEdit('')} type="button" />
+                        </Dialog.Footer>
+                        <Dialog.CloseTrigger asChild>
+                          <CloseButton size="sm" />
+                        </Dialog.CloseTrigger>
+                      </Dialog.Content>
+                    </Dialog.Positioner>
+                  </Portal>
+                </Dialog.RootProvider>
+                  <h4 style={{ textAlign: "right", paddingBottom: "10px" }}>Exibindo página {meds.page} - Total: {meds.totalRecords} Medicamentos</h4>
+                </div>
         <Table.Root key={"MedsTable"} size="sm" variant={"outline"}>
           <Table.Header>
             <Table.Row>

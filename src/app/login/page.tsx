@@ -7,6 +7,8 @@ import { toaster } from "@/components/ui/toaster"
 import { useAuth } from "../contexts/auth.context";
 import StInput from "../components/Input/StInput";
 import StForm from "../components/Form/StForm";
+import performRequest from "../utils/handleRequest";
+import { jwtDecode } from "jwt-decode";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState<string>("");
@@ -15,11 +17,36 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const router = useRouter();
 
-  const handleLogin = () => {
+  type TokenPayload = { id: string, name: string, login: string, token: string };
+
+  const handleLogin = async () => {
     setLoading(true);
     if (username && password) {
-      login({ id: "1", name: "User", login: username });
-      router.push("/dashboard");
+      const res = await performRequest("POST", "/api/auth", {
+        "Content-Type": "application/x-www-form-urlencoded",
+      }, setLoading, {
+        client_id: username,
+        client_secret: password,
+        grant_type: "client_credentials",
+      });
+
+      if (res.status === 200) {
+        const decoded = jwtDecode<TokenPayload>(res.data.access_token);
+        login({ id: decoded.id, name: decoded.name, login: decoded.login, token: res.data.access_token });
+        toaster.create({
+          title: "Ok!",
+          description: "Login realizado com sucesso",
+          type: "success",
+          duration: 3000,
+        })
+      }
+
+      toaster.create({
+        title: "Erro",
+        description: res.data.message,
+        type: "error",
+        duration: 3000,
+      })
     } else {
       toaster.create({
         title: "Erro",

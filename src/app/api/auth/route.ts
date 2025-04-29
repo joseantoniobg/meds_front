@@ -1,25 +1,45 @@
 import { NextResponse } from 'next/server';
 import api from '@/lib/axios';
-import { Axios, AxiosError } from 'axios';
+import { AxiosError } from 'axios';
+import { jwtDecode } from "jwt-decode";
+import { getSession } from '@/lib/session';
 
 export async function POST(req: Request) {
   const body = await req.json();
 
-  console.log('body', body);
+  type TokenPayload = { id: string, name: string, login: string };
 
   try {
-    const res = await api.post('/auth/token', body, {
+    const res = await api.request({
+      method: 'POST',
+      url: '/auth/token',
+      data: new URLSearchParams({
+        client_id: body.client_id,
+        client_secret: body.client_secret,
+        grant_type: 'client_credentials',
+      }),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
 
-    return NextResponse.json(res.data);
+    const decoded = jwtDecode<TokenPayload>(res.data.access_token);
+
+    const session = await getSession();
+    session.user = {
+      id: decoded.id,
+      name: decoded.name,
+      login: decoded.login,
+      token: res.data.access_token,
+      refreshToken: res.data.refresh_token,
+    };
+    await session.save();
+
+    return NextResponse.json(decoded);
   } catch (error: AxiosError | unknown) {
     if (error instanceof AxiosError) {
-      console.log('error', error.response?.data);
       return NextResponse.json(error.response?.data, { status: error.status });
     }
-    return NextResponse.json({ error: 'Unknown error' }, { status: 500 });
+    return NextResponse.json({ message: 'Erro desconhecido' }, { status: 500 });
   }
 }

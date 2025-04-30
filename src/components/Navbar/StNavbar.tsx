@@ -43,6 +43,9 @@ export default function StNavBar() {
       { name: 'Medicamentos',
         href: '/meds',
       },
+      { name: 'Receitas',
+        href: '/medicalPrescriptions',
+      },
     { name: 'Sair',
       href: '',
       onClick: logout }];

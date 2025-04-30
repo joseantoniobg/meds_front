@@ -22,11 +22,11 @@ export default function StForm({ children, label, title, subtitle, onClick, load
         {subtitle}
       </Fieldset.HelperText>}
     </Stack>
-    <Box display={horizontal ? "flex" : "contents"} alignItems={"center"} width={"100%"}>
+    <Box display={horizontal ? "flex" : "contents"} alignItems={"center"} justifyContent={"center"} gap={horizontal ? "10px" : "0px"} width={"100%"} >
       <Fieldset.Content>
       {children}
       </Fieldset.Content>
-      <StButton type="submit" onClick={onClick} label={label} loading={loading} />
+      <StButton style={{ marginBottom: horizontal ? '-8px' : 0 }} type="submit" onClick={onClick} label={label} loading={loading} />
     </Box>
   </Fieldset.Root>
   );

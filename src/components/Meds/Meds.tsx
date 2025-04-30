@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/auth.context";
 import performRequest from "@/lib/handleRequest";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toaster } from "../ui/toaster";
 import { Box, CloseButton, createListCollection, Dialog, Portal, Select, Table, useDialog, useSelect } from "@chakra-ui/react";
 import StForm from "../Form/StForm";
@@ -49,25 +49,80 @@ export default function Meds() {
   }
   , [page, size]);
 
-  const handleEdit = (id: string) => {
-
-  }
-
   const columns = ["Nome", "Modo de Uso", "Ações"];
 
   const useMethods = createListCollection({
     items: [
       { label: "USO ORAL", value: "USO ORAL" },
       { label: "USO TOPICO", value: "USO TOPICO" },
+      { label: "USO OFTALMICO", value: "USO OFTALMICO" },
+      { label: "USO INALATORIO", value: "USO INALATORIO" },
+      { label: "USO SUBCUTANEO", value: "USO SUBCUTANEO" },
+      { label: "USO INTRAMUSCULAR", value: "USO INTRAMUSCULAR" },
     ],
-  })
+  });
 
   const useMethodSelect = useSelect({
     collection: useMethods,
     onValueChange: (value) => {
-      setUseMethod('');
+      setUseMethod(value.value[0]);
     },
   });
+
+  const handleSave = async () => {
+    if (newName === '') {
+      toaster.create({
+        title: "Erro",
+        description: "Informe o nome do medicamento",
+        type: "error",
+        duration: 1500,
+      })
+      return;
+    }
+
+    if (useMethod === '') {
+      toaster.create({
+        title: "Erro",
+        description: "Selecione a forma de uso do medicamento",
+        type: "error",
+        duration: 1500,
+      })
+      return;
+    }
+
+    const res = await performRequest(id === '' ? "POST" : "PATCH",`/api/meds`, {
+      "Content-Type": "application/json",
+    }, setLoading,
+    `Medicamento ${id === '' ? 'salvo' : 'atualizado'} com sucesso`,
+    toaster,
+    logout,
+    {
+      id,
+      name: newName,
+      useMethod,
+    });
+
+  if (res.status !== 200) {
+    return;
+  }
+
+  dialog.setOpen(false);
+  useMethodSelect.clearValue();
+  setId('');
+  setNewName('');
+  setUseMethod('');
+  handleRequest();
+}
+
+  const handleEdit = async (id: string, name: string, useMethod: string) => {
+    setId(id);
+    setNewName(name);
+    setUseMethod(useMethod);
+    useMethodSelect.value[0] = useMethod;
+    dialog.setOpen(true);
+  }
+
+  const contentRef = useRef<HTMLDivElement>(null);
 
   return (
     <Box display={"contents"}
@@ -78,14 +133,14 @@ export default function Meds() {
          <div style={{ display: "flex", marginBottom: "10px", justifyContent: "space-between", alignItems: "center" }}>
                 <Dialog.RootProvider value={dialog}>
                   <Dialog.Trigger asChild>
-                    <StButton label="Novo Paciente" loading={false} type="button" />
+                    <StButton label="Novo Medicamento" loading={false} type="button" />
                   </Dialog.Trigger>
                   <Portal>
                     <Dialog.Backdrop />
                     <Dialog.Positioner>
-                      <Dialog.Content>
+                      <Dialog.Content ref={contentRef}>
                         <Dialog.Header>
-                          <Dialog.Title>Novo Paciente</Dialog.Title>
+                          <Dialog.Title>Novo Medicamento</Dialog.Title>
                         </Dialog.Header>
                         <Dialog.Body>
                           <StInput id="mewMed" label="Nome" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nome do Medicamento" />
@@ -100,7 +155,7 @@ export default function Meds() {
                                 <Select.Indicator />
                               </Select.IndicatorGroup>
                             </Select.Control>
-                            <Portal>
+                            <Portal container={contentRef}>
                               <Select.Positioner>
                                 <Select.Content>
                                   {useMethods.items.map((um) => (
@@ -115,7 +170,7 @@ export default function Meds() {
                           </Select.RootProvider>
                         </Dialog.Body>
                         <Dialog.Footer>
-                          <StButton label="Salvar" loading={loading} onClick={() => handleEdit('')} type="button" />
+                          <StButton label="Salvar" loading={loading} onClick={handleSave} type="button" />
                         </Dialog.Footer>
                         <Dialog.CloseTrigger asChild>
                           <CloseButton size="sm" />
@@ -141,7 +196,7 @@ export default function Meds() {
               <Table.Row key={med.id}>
                 <Table.Cell>{med.name}</Table.Cell>
                 <Table.Cell>{med.useMethod}</Table.Cell>
-                <Table.Cell><StButton label="Editar" loading={false} onClick={() => handleEdit(med.id)} type="button" /></Table.Cell>
+                <Table.Cell><StButton label="Editar" loading={false} onClick={() => handleEdit(med.id, med.name, med.useMethod)} type="button" /></Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>

@@ -12,9 +12,10 @@ interface CustomInputProps {
   maxLength?: number;
   type?: string;
   errorText?: string;
+  style?: React.CSSProperties;
 }
 
-export default function StInput({ value, onChange, placeholder, onKeyDown, maxLength, type, id, label, errorText }: CustomInputProps) {
+export default function StInput({ value, onChange, placeholder, onKeyDown, maxLength, type, id, label, errorText, style }: CustomInputProps) {
   return (
     <Field.Root id={id} mb={4}>
     <FieldLabel>{label}</FieldLabel>
@@ -25,6 +26,7 @@ export default function StInput({ value, onChange, placeholder, onKeyDown, maxLe
       placeholder={placeholder}
       maxLength={maxLength}
       onKeyDown={onKeyDown}
+      style={style}
     />
     <Field.ErrorText>{errorText}</Field.ErrorText>
   </Field.Root>

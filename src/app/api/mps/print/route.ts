@@ -2,13 +2,12 @@ import { NextResponse } from 'next/server';
 import api from '@/lib/axios';
 import { AxiosError } from 'axios';
 import { getSession } from '@/lib/session';
-import { SysUser } from '@/lib/utils';
 
 export async function GET(req: Request) {
   const parameters = req.url.split('?')[1];
 
   const session = await getSession();
-  const sessionUser = (session as unknown as { user: SysUser }).user;
+  const sessionUser = session.user;
 
   try {
     const res = await api.request({

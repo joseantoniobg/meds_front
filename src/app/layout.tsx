@@ -1,5 +1,5 @@
 import { Provider } from "@/components/ui/provider"
-import { AuthProvider } from "@/contexts/auth.context"
+import { AuthProvider, useAuth } from "@/contexts/auth.context"
 import { Toaster } from "@/components/ui/toaster"
 
 export default function RootLayout(props: { children: React.ReactNode }) {

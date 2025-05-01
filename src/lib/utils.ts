@@ -31,12 +31,3 @@ export const formatStringDateToISO = (dateString: string) => {
 
   return dateString;
 }
-
-
-export type SysUser = {
-  id: string;
-  name: string;
-  login: string;
-  token: string;
-  refreshToken: string;
-};

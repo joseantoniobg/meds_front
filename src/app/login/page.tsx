@@ -1,18 +1,20 @@
 "use client"; // Ensure this is added to mark the file as a client component
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Input, Button, Box, Heading, Field, FieldLabel } from "@chakra-ui/react";
 import { toaster } from "@/components/ui/toaster"
 import { useAuth } from "@/contexts/auth.context";
 import StInput from "@/components/Input/StInput";
 import StForm from "@/components/Form/StForm";
 import performRequest from "@/lib/handleRequest";
-import { Box, Heading } from "@chakra-ui/react";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { login, logout } = useAuth();
+  const router = useRouter();
 
   const handleLogin = async () => {
     setLoading(true);

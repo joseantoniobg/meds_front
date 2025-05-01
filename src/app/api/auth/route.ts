@@ -3,7 +3,6 @@ import api from '@/lib/axios';
 import { AxiosError } from 'axios';
 import { jwtDecode } from "jwt-decode";
 import { getSession } from '@/lib/session';
-import { SysUser } from '@/lib/utils';
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -27,7 +26,7 @@ export async function POST(req: Request) {
     const decoded = jwtDecode<TokenPayload>(res.data.access_token);
 
     const session = await getSession();
-    (session as unknown as { user: SysUser }).user = {
+    session.user = {
       id: decoded.id,
       name: decoded.name,
       login: decoded.login,

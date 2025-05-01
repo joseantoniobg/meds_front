@@ -1,5 +1,6 @@
 "use client";
 
+import { Field, FieldLabel, Input } from "@chakra-ui/react";
 import StNavBar from "../Navbar/StNavbar";
 import Login from "@/app/login/page";
 import { useAuth } from "@/contexts/auth.context";

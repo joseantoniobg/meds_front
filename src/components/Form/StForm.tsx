@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Fieldset, Stack } from "@chakra-ui/react";
+import { Box, Button, Fieldset, Stack } from "@chakra-ui/react";
 import StButton from "../Button/StButton";
 
 interface CustomInputProps {

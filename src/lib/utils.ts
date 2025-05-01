@@ -21,3 +21,13 @@ export const formatStringDate = (dateString: string) => {
 
    return formatted;
 }
+
+export const formatStringDateToISO = (dateString: string) => {
+  const cleaned = dateString.replace(/\D/g, '');
+
+  if (cleaned.length === 8) {
+    return `${cleaned.slice(4, 8)}-${cleaned.slice(2, 4)}-${cleaned.slice(0, 2)}`;
+  }
+
+  return dateString;
+}

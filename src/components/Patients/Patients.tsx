@@ -9,8 +9,16 @@ import StButton from "../Button/StButton";
 import StPagination from "../Pagination/StPagination";
 import { formatDate, formatStringDate } from "@/lib/utils";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
+import { StCheckBox } from "../StCheckBox/StCheckBox";
 
-export default function Patients() {
+type Props = {
+  selectedPatient?: string;
+  setSelectedPatient?: (patient: string) => void;
+  patientName?: string;
+  setPatientName?: (name: string) => void;
+};
+
+export default function Patients({ selectedPatient, setSelectedPatient, patientName, setPatientName }:Props) {
   const [name, setName] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(10);
@@ -19,6 +27,7 @@ export default function Patients() {
   const [selectedMedicalPrescriptions, setSelectedMedicalPrescriptions] = useState<string[]>([]);
   const [openedPatients, setOpenedPatients] = useState<string[]>(['']);
   const [date, setDate] = useState<string>(new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }));
+  const [onlyValid, setOnlyValid] = useState<boolean>(false);
 
   const [patients, setPatients] = useState<any>({
     content: [],
@@ -35,7 +44,7 @@ export default function Patients() {
   const handleRequest = async () => {
     setLoading(true);
 
-    const res = await performRequest("GET",`/api/patients?page=${page}&size=${size}&name=${name}`, {
+    const res = await performRequest("GET",`/api/patients?page=${page}&size=${size}&name=${name}${onlyValid ? '&status=1' : ''}`, {
             "Content-Type": "application/json",
           }, setLoading,
           "Dados carregados com sucesso",
@@ -72,7 +81,7 @@ export default function Patients() {
     toaster,
     logout,
     {
-      id,
+      id: id === '' ? undefined : id,
       name: newName
     });
 
@@ -148,6 +157,7 @@ export default function Patients() {
     <Box display={"contents"}>
       <StForm horizontal label="Pesquisar" onClick={() => page != 1 ? setPage(1) : handleRequest()} loading={loading}>
         <StInput id="name" label="Nome" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome do Paciente" />
+        <StCheckBox label="Mostrar Apenas Receitas Válidas" value={onlyValid} setValue={setOnlyValid} marginTop="20px" />
       </StForm>
         <div style={{ display: "flex", marginBottom: "10px", justifyContent: "space-between", gap: "10px", alignItems: "center" }}>
           <div style={{ display: "flex", gap: "10px", justifyContent: "flex-start", alignItems: "center", marginTop: "10px" }}>
@@ -182,17 +192,21 @@ export default function Patients() {
           <h4 style={{ textAlign: "right", paddingTop: "25px" }}>Exibindo página {patients.page} - Total: {patients.totalRecords} Pacientes</h4>
         </div>
         <Accordion.Root collapsible onValueChange={(e) => setOpenedPatients(e.value)}>
-            {patients.content.map((patient) => (
+            {patients?.content && patients.content.map((patient) => (
                       <Accordion.Item key={patient.id} value={patient.name}>
                         <Accordion.ItemTrigger>
+                            {setSelectedPatient && <StCheckBox label={""} value={selectedPatient === patient.id} setValue={() => {
+                              if(setSelectedPatient) setSelectedPatient(patient.id)
+                              if(setPatientName) setPatientName(patient.name)
+                             }} />}
                             <Span flex="1">{patient.name}</Span>
                             <StButton label="Editar" loading={false} onClick={() => handleEdit(patient.id, patient.name)} type="button" />
                             <StButton label="Imprimir" colorPalette="blue" loading={false} onClick={() => handlePrint(patient.id, '')} type="button" />
                           <Accordion.ItemIndicator />
                         </Accordion.ItemTrigger>
                         <Accordion.ItemContent>
-                            {patient.prescriptions.length === 0 && <p>Paciente sem receitas</p>}
-                            {(patient.prescriptions.length > 0 && patient.name === openedPatients[0]) && <Box style={{ display: "grid", gap: "10px", padding: "10px", gridTemplateColumns: "repeat(3, minmax(500px, auto)" }}>
+                            {!setSelectedPatient && patient.prescriptions.length === 0 && <p>Paciente sem receitas</p>}
+                            {(!setSelectedPatient && patient.prescriptions.length > 0 && patient.name === openedPatients[0]) && <Box style={{ display: "grid", gap: "10px", padding: "10px", gridTemplateColumns: "repeat(3, minmax(500px, auto)" }}>
                                 {patient.prescriptions.map((p, index: number) => (<Card.Root key={p.id}>
                                   <Card.Body gap="2">
                                     <Card.Title mt="2">
@@ -222,7 +236,7 @@ export default function Patients() {
                                                           </Table.Header>
                                                           <Table.Body>
                                         {p.medicines.map((m: any) => (
-                                          <Table.Row key={p.id + m.id}>
+                                          <Table.Row key={p.id + m.idMedicine}>
                                             <Table.Cell>{m.medicine.name}</Table.Cell>
                                             <Table.Cell>{m.quantity}</Table.Cell>
                                             <Table.Cell>{m.instructionOfUse}</Table.Cell>
@@ -231,7 +245,7 @@ export default function Patients() {
                                       </Table.Root>
                                   </Card.Body>
                                   <Card.Footer justifyContent="flex-end">
-                                    <ConfirmDialog key={p.id + 'dia'} label="Cancelar" handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
+                                    <ConfirmDialog key={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
                                       <Button key={p.id+'cancb'} loading={loading} colorPalette={"red"}>Cancelar</Button>
                                     </ConfirmDialog>
                                     <Button style={{ marginTop: "12px" }} onClick={() => handlePrint('', p.id)}>Imprimir</Button>

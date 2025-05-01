@@ -20,7 +20,7 @@ interface CustomInputProps {
 export default function StInput({ value, onChange, placeholder, onKeyDown, maxLength, type, id, label, errorText, style, mask, rootStyle }: CustomInputProps) {
   return (
     <Field.Root style={rootStyle} id={id}>
-      <FieldLabel>{label}</FieldLabel>
+      {label !== '' && <FieldLabel>{label}</FieldLabel>}
       <Input
         value={value}
         onChange={onChange}

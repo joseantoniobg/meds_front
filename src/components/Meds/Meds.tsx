@@ -7,8 +7,15 @@ import StForm from "../Form/StForm";
 import StInput from "../Input/StInput";
 import StButton from "../Button/StButton";
 import StPagination from "../Pagination/StPagination";
+import { StTextArea } from "../TextArea/StTextArea";
+import { StCheckBox } from "../StCheckBox/StCheckBox";
 
-export default function Meds() {
+type Props = {
+  setSelectedMeds?:(id: string, name: string) => void;
+  selectedMeds?: { id: string }[];
+}
+
+export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
   const [name, setName] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(10);
@@ -97,7 +104,7 @@ export default function Meds() {
     toaster,
     logout,
     {
-      id,
+      id: id === '' ? undefined : id,
       name: newName,
       useMethod,
     });
@@ -143,7 +150,7 @@ export default function Meds() {
                           <Dialog.Title>Novo Medicamento</Dialog.Title>
                         </Dialog.Header>
                         <Dialog.Body>
-                          <StInput id="mewMed" label="Nome" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nome do Medicamento" />
+                          <StTextArea id="mewMed" label="Nome" value={newName} setValue={setNewName} placeholder="Nome do Medicamento" />
                           <Select.RootProvider value={useMethodSelect} size="sm" width="320px">
                             <Select.HiddenSelect />
                             <Select.Label>Modo de uso</Select.Label>
@@ -194,7 +201,9 @@ export default function Meds() {
           <Table.Body>
             {meds.content.map((med) => (
               <Table.Row key={med.id}>
-                <Table.Cell>{med.name}</Table.Cell>
+                <Table.Cell display={"flex"}> {setSelectedMeds && <StCheckBox style={{ margin: "10px", marginLeft: "0px" }} key={med.id+'chk'} label={""} value={selectedMeds.some(m => m.id === med.id)} setValue={() => {
+                                              if(setSelectedMeds) setSelectedMeds(med.id, med.name);
+                                             }} />}{med.name}</Table.Cell>
                 <Table.Cell>{med.useMethod}</Table.Cell>
                 <Table.Cell><StButton label="Editar" loading={false} onClick={() => handleEdit(med.id, med.name, med.useMethod)} type="button" /></Table.Cell>
               </Table.Row>

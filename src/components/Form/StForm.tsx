@@ -22,8 +22,8 @@ export default function StForm({ children, label, title, subtitle, onClick, load
         {subtitle}
       </Fieldset.HelperText>}
     </Stack>
-    <Box display={horizontal ? "flex" : "contents"} alignItems={"center"} justifyContent={"center"} gap={horizontal ? "10px" : "0px"} width={"100%"} >
-      <Fieldset.Content>
+    <Box display={horizontal ? "flex" : "contents"} alignItems={"center"} justifyContent={"flex-start"} gap={horizontal ? "10px" : "0px"} >
+      <Fieldset.Content display={horizontal ? "flex" : "contents"} flexDirection={"row"} alignItems={"flex-start"} justifyContent={"center"} gap={horizontal ? "10px" : "0px"} >
       {children}
       </Fieldset.Content>
       <StButton style={{ marginBottom: horizontal ? '-8px' : 0 }} type="submit" onClick={onClick} label={label} loading={loading} />

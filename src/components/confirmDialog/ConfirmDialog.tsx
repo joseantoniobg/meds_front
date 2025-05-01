@@ -6,7 +6,6 @@ import { useState } from "react";
 
 interface CustomInputProps {
   key: string;
-  label: string;
   children: React.ReactNode;
   handleConfirm: () => void;
   title: string;
@@ -14,7 +13,7 @@ interface CustomInputProps {
   loading: boolean;
 }
 
-export default function ConfirmDialog({ key, label, children, handleConfirm, title, question, loading }: CustomInputProps) {
+export default function ConfirmDialog({ key, children, handleConfirm, title, question, loading }: CustomInputProps) {
   const [open, setOpen] = useState(false);
   return (
     <Dialog.Root key={key} open={open} onOpenChange={(d) => setOpen(d.open)}>

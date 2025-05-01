@@ -1,7 +1,6 @@
 'use client'
 import { ButtonGroup, IconButton, Pagination } from '@chakra-ui/react';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
-import { forwardRef } from '@chakra-ui/system';
 
 type Props = {
   totalRecords: number;

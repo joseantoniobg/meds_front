@@ -9,7 +9,6 @@ import {
   Stack,
   useDisclosure
 } from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import NextLink from 'next/link';
 import { useColorModeValue } from '@/components/ui/color-mode';
 import { useAuth } from '@/contexts/auth.context';

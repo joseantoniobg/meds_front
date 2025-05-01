@@ -20,14 +20,22 @@ export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(10);
 
+  setSize(10);
+
   const [id, setId] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
   const [useMethod, setUseMethod] = useState<string>('');
 
   const dialog = useDialog();
 
-  const [meds, setMeds] = useState<any>({
-    content: [],
+  type MedType = {
+    id: string;
+    name: string;
+    useMethod: string;
+  }
+
+  const [meds, setMeds] = useState({
+    content: [] as MedType[],
     totalRecords: 0,
     totalPages: 0,
     page: 1,
@@ -201,7 +209,7 @@ export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
           <Table.Body>
             {meds.content.map((med) => (
               <Table.Row key={med.id}>
-                <Table.Cell display={"flex"}> {setSelectedMeds && <StCheckBox style={{ margin: "10px", marginLeft: "0px" }} key={med.id+'chk'} label={""} value={selectedMeds.some(m => m.id === med.id)} setValue={() => {
+                <Table.Cell display={"flex"}> {setSelectedMeds && <StCheckBox style={{ margin: "10px", marginLeft: "0px" }} key={med.id+'chk'} label={""} value={selectedMeds ? selectedMeds.some(m => m.id === med.id) : undefined} setValue={() => {
                                               if(setSelectedMeds) setSelectedMeds(med.id, med.name);
                                              }} />}{med.name}</Table.Cell>
                 <Table.Cell>{med.useMethod}</Table.Cell>

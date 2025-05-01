@@ -13,22 +13,25 @@ interface CustomInputProps {
   type?: string;
   errorText?: string;
   style?: React.CSSProperties;
+  rootStyle?: React.CSSProperties;
+  mask?: string;
 }
 
-export default function StInput({ value, onChange, placeholder, onKeyDown, maxLength, type, id, label, errorText, style }: CustomInputProps) {
+export default function StInput({ value, onChange, placeholder, onKeyDown, maxLength, type, id, label, errorText, style, mask, rootStyle }: CustomInputProps) {
   return (
-    <Field.Root id={id} mb={4}>
-    <FieldLabel>{label}</FieldLabel>
-    <Input
-      value={value}
-      onChange={onChange}
-      type={type ?? 'text'}
-      placeholder={placeholder}
-      maxLength={maxLength}
-      onKeyDown={onKeyDown}
-      style={style}
-    />
-    <Field.ErrorText>{errorText}</Field.ErrorText>
+    <Field.Root style={rootStyle} id={id}>
+      <FieldLabel>{label}</FieldLabel>
+      <Input
+        value={value}
+        onChange={onChange}
+        type={type ?? 'text'}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        onKeyDown={onKeyDown}
+        style={style}
+        mask={mask}
+      />
+      <Field.ErrorText>{errorText}</Field.ErrorText>
   </Field.Root>
   );
 }

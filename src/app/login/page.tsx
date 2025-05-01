@@ -63,6 +63,7 @@ const Login: React.FC = () => {
         <StForm label="Entrar" onClick={handleLogin} loading={loading}>
           <StInput id="username" label="Usuário" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Digite seu usuário" />
           <StInput id="password" label="Senha" value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Digite sua senha" />
+          <div style={{ marginTop: "4px" }}></div>
         </StForm>
       </Box>
     </Box>

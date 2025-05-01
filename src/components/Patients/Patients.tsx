@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/auth.context";
 import performRequest from "@/lib/handleRequest";
 import { useEffect, useState } from "react";
 import { toaster } from "../ui/toaster";
-import { Accordion, Avatar, Badge, Box, Button, Card, Checkbox, CloseButton, Dialog, Portal, Span, Table, useDialog } from "@chakra-ui/react";
+import { Accordion, Badge, Box, Button, Card, Checkbox, CloseButton, Dialog, Portal, Span, Table, useDialog } from "@chakra-ui/react";
 import StForm from "../Form/StForm";
 import StInput from "../Input/StInput";
 import StButton from "../Button/StButton";
@@ -18,7 +18,7 @@ type Props = {
   setPatientName?: (name: string) => void;
 };
 
-export default function Patients({ selectedPatient, setSelectedPatient, patientName, setPatientName }:Props) {
+export default function Patients({ selectedPatient, setSelectedPatient, setPatientName }:Props) {
   const [name, setName] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(10);
@@ -29,8 +29,32 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
   const [date, setDate] = useState<string>(new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }));
   const [onlyValid, setOnlyValid] = useState<boolean>(false);
 
-  const [patients, setPatients] = useState<any>({
-    content: [],
+  setSize(10);
+
+  type TypePatient = {
+    id: string;
+    name: string;
+    prescriptions: {
+      id: string;
+      status: {
+        id: number;
+        description: string;
+      };
+      initialDate: string;
+      renewal: number;
+      medicines: {
+        idMedicine: string;
+        medicine: {
+          name: string;
+        };
+        quantity: number;
+        instructionOfUse: string;
+      }[];
+    }[];
+  }
+
+  const [patients, setPatients] = useState({
+    content: [] as TypePatient[],
     totalRecords: 0,
     totalPages: 0,
     page: 1,
@@ -60,7 +84,6 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
   }
   , [page, size]);
 
-  const columns = ["Nome", "Ações"];
   const dialog = useDialog();
 
   const handleSave = async () => {
@@ -95,7 +118,13 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
     handleRequest();
   }
 
-  const handleSelectMP = (id: string, e) => {
+  type EType = {
+    target: {
+      checked: boolean;
+    };
+  }
+
+  const handleSelectMP = (id: string, e: EType) => {
     const newMPs = [...selectedMedicalPrescriptions];
     if (e.target.checked) {
       newMPs.push(id);
@@ -115,7 +144,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
   }
 
   const handleCancel = async (id: string) => {
-    const res = await performRequest("PATCH", `/api/mps/cancel`, {
+    await performRequest("PATCH", `/api/mps/cancel`, {
       "Content-Type": "application/json",
     }, setLoading,
     `Receita cancelada com sucesso`,
@@ -210,7 +239,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                                 {patient.prescriptions.map((p, index: number) => (<Card.Root key={p.id}>
                                   <Card.Body gap="2">
                                     <Card.Title mt="2">
-                                       <Checkbox.Root onChange={(e) => handleSelectMP(p.id, e)} colorPalette={"green"} checked={selectedMedicalPrescriptions.includes(p.id)}>
+                                       <Checkbox.Root onChange={(e) => handleSelectMP(p.id, e as unknown as EType)} colorPalette={"green"} checked={selectedMedicalPrescriptions.includes(p.id)}>
                                           <Checkbox.HiddenInput />
                                           <Checkbox.Control style={{ margin: "3px 5px 0 0", border: "1px solid #aaa" }} />
                                         </Checkbox.Root> Receita #{index + 1}
@@ -235,7 +264,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                                                             </Table.Row>
                                                           </Table.Header>
                                                           <Table.Body>
-                                        {p.medicines.map((m: any) => (
+                                        {p.medicines.map((m) => (
                                           <Table.Row key={p.id + m.idMedicine}>
                                             <Table.Cell>{m.medicine.name}</Table.Cell>
                                             <Table.Cell>{m.quantity}</Table.Cell>

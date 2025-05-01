@@ -6,7 +6,7 @@ import {
   type ColorModeProviderProps,
 } from "./color-mode"
 
-export function Provider(props: ColorModeProviderProps) {
+export function Provider(props: ColorModeProviderProps & { children: React.ReactNode }) {
   return (
     <ChakraProvider value={defaultSystem}>
       <Theme appearance="dark" colorPalette="teal">

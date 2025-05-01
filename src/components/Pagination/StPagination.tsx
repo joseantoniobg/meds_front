@@ -1,5 +1,5 @@
 'use client'
-import { Pagination, ButtonGroup, IconButton } from '@chakra-ui/icons';
+import { ButtonGroup, IconButton, Pagination } from '@chakra-ui/react';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 
 type Props = {

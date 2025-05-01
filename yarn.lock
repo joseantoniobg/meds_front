@@ -144,12 +144,7 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
-"@chakra-ui/icons@^2.2.4":
-  version "2.2.4"
-  resolved "https://registry.npmjs.org/@chakra-ui/icons/-/icons-2.2.4.tgz"
-  integrity sha512-l5QdBgwrAg3Sc2BRqtNkJpfuLw/pWRDwwT58J6c4PqQT6wzXxyNa8Q0PForu1ltB5qEiFb1kxr/F/HO1EwNa6g==
-
-"@chakra-ui/react@^3.16.1", "@chakra-ui/react@>=2.0.0":
+"@chakra-ui/react@^3.16.1":
   version "3.16.1"
   resolved "https://registry.npmjs.org/@chakra-ui/react/-/react-3.16.1.tgz"
   integrity sha512-LOfPrI2L2JdFo1tt/7C+WLJj8NCyZMviWhaRPIY5/oirmvhMuGF+xUTtR+6iKUBk0QcH2ZRsDHbuhtAxCoco0w==

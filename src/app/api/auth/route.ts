@@ -40,6 +40,7 @@ export async function POST(req: Request) {
     if (error instanceof AxiosError) {
       return NextResponse.json(error.response?.data, { status: error.status });
     }
+    console.error(error);
     return NextResponse.json({ message: 'Erro desconhecido' }, { status: 500 });
   }
 }

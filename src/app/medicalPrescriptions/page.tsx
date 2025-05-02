@@ -15,7 +15,7 @@ import StButton from "@/components/Button/StButton";
 import { Step } from "@/components/Step/Step";
 import { StepBox } from "@/components/StepBox/StepBox";
 import ConfirmDialog from "@/components/confirmDialog/ConfirmDialog";
-import { FaPrint } from "react-icons/fa";
+import { FaBookMedical, FaEyeDropper, FaPrint, FaReceipt, FaRegWindowClose } from "react-icons/fa";
 import { FaFloppyDisk, FaTrashCan } from "react-icons/fa6";
 import styles from "./MedicalPrescriptions.module.scss";
 
@@ -144,6 +144,10 @@ export default function MedicalPrescriptions() {
     window.open(`/api/mps/print?medicalPrescriptionIds=${idMedicalPrescriptions.join(",")}&date=${formatStringDateToISO(initialDate)}`, '_blank');
   }
 
+  const handleDailyPrint = async (print: boolean) => {
+    window.open(`/api/mps/print?dailyEmission=true&print=${print}`, '_blank');
+  }
+
   return (
     <StPage>
       <h1 style={{ fontSize: "16px" }}>Receita Médica</h1>
@@ -165,6 +169,14 @@ export default function MedicalPrescriptions() {
                   </Box>
                 </Box>
               </Box>
+              <Box display={"flex"} gap={"10px"} marginTop={"-25px"}>
+                <ConfirmDialog key="confirmConference" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Conferência de Receitas" question="Deseja conferir as receitas do dia?" >
+                  <StButton colorPalette={"blue"} icon={<FaEyeDropper />} label="Conferir Receitas do Dia" loading={false} />
+                </ConfirmDialog>
+                <ConfirmDialog key="printDaily" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Impressào de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
+                  <StButton colorPalette={"orange"} icon={<FaBookMedical />} label="Imprimir Receitas do Dia" loading={false} onClick={() => handleDailyPrint(false)} />
+                </ConfirmDialog>
+              </Box>
             </Box>
             <Box display={"flex"} flexDirection={"column"} justifyContent={"space-between"} style={{ border: "1px solid rgb(39, 39, 39)", borderRadius: "10px", padding: "6px 17px 17px 17px" }}>
               <Box>
@@ -178,7 +190,10 @@ export default function MedicalPrescriptions() {
                 <Box display={"flex"} flexDirection={"column"} alignItems={"flex-start"} justifyContent={"center"} gap={"10px"}>
                   <StepBox>
                     <Step step={1} title="Selecione o Paciente" checked={selectedPatient !== ''} />
-                    <h3>Paciente Selecionado: {selectedPatient === '' ? 'NENHUM' : patientName}</h3>
+                    <Box display={"flex"} alignItems={"center"} flexDirection={"row"} gap={"10px"}>
+                      <h3>Paciente Selecionado: {selectedPatient === '' ? 'NENHUM' : patientName}</h3>
+                      {selectedPatient !== '' && <StButton variant="ghost" colorPalette={"red"} icon={<FaRegWindowClose />} label="" loading={loading} onClick={() => setSelectedPatient('')} type="button" />}
+                    </Box>
                   </StepBox>
                   <Step step={2} title="Informe as medicações e formas de uso" checked={medications.some((m) => m.instructionOfUse !== '' && m.quantity !== '')} />
                   <StepBox>

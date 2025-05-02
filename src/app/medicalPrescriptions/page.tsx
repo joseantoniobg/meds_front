@@ -173,8 +173,8 @@ export default function MedicalPrescriptions() {
                 <ConfirmDialog key="confirmConference" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Conferência de Receitas" question="Deseja conferir as receitas do dia?" >
                   <StButton colorPalette={"blue"} icon={<FaEyeDropper />} label="Conferir Receitas do Dia" loading={false} />
                 </ConfirmDialog>
-                <ConfirmDialog key="printDaily" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Impressào de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
-                  <StButton colorPalette={"orange"} icon={<FaBookMedical />} label="Imprimir Receitas do Dia" loading={false} onClick={() => handleDailyPrint(false)} />
+                <ConfirmDialog key="printDaily" handleConfirm={() => handleDailyPrint(true)} loading={loading} title="Impressào de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
+                  <StButton colorPalette={"orange"} icon={<FaBookMedical />} label="Imprimir Receitas do Dia" loading={false} />
                 </ConfirmDialog>
               </Box>
             </Box>

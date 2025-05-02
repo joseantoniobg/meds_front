@@ -165,7 +165,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
             <Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"50vh"}>
               <Spinner color="colorPalette.600" colorPalette={"teal"} size={"lg"} />
             </Box>}
-        {!loading && <><div style={{ display: "flex", gap: "10px", justifyContent: "flex-start", alignItems: "center", marginTop: "10px" }}>
+        {!loading && <><div style={{ display: "flex", gap: "10px", justifyContent: "space-between", alignItems: "center", marginTop: "10px" }}>
         <div style={{ display: "flex", marginBottom: "10px", justifyContent: "space-between", gap: "10px", alignItems: "center" }}>
             <Dialog.RootProvider value={dialog}>
               <Dialog.Trigger style={{ marginTop: "15px" }} asChild>

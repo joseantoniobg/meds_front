@@ -43,3 +43,16 @@ export default async function performRequest(method: string, url: string, header
     setLoading(false);
     return { data, status };
 }
+
+export async function performRequestSimple(method: string, url: string, headers: any, body?: any) {
+  const res = await fetch(url, {
+    method,
+    headers,
+    body: body && JSON.stringify(body),
+  });
+
+  const data = await res.json();
+  const status = res.status;
+
+  return { data, status };
+}

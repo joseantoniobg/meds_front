@@ -27,7 +27,6 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
   const [id, setId] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
   const [selectedMedicalPrescriptions, setSelectedMedicalPrescriptions] = useState<string[]>([]);
-  const [openedPatients, setOpenedPatients] = useState<string[]>(['']);
   const [date, setDate] = useState<string>(new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }));
   const [onlyValid, setOnlyValid] = useState<boolean>(false);
 
@@ -197,7 +196,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
           </div>
           <h4 style={{ textAlign: "right", paddingTop: "25px" }}>Exibindo página {patients.page} - Total: {patients.totalRecords} Pacientes</h4>
         </div>
-        <Accordion.Root collapsible onValueChange={(e) => setOpenedPatients(e.value)}>
+        <Accordion.Root collapsible>
             {patients?.content && patients.content.map((patient) => (
                       <Accordion.Item key={patient.id} value={patient.name}>
                         <Accordion.ItemTrigger>
@@ -212,7 +211,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                         </Accordion.ItemTrigger>
                         <Accordion.ItemContent>
                             {!setSelectedPatient && patient.prescriptions.length === 0 && <p>Paciente sem receitas</p>}
-                            {(!setSelectedPatient && patient.prescriptions.length > 0 && patient.name === openedPatients[0]) && <Box style={{ display: "grid", gap: "10px", padding: "10px", gridTemplateColumns: "repeat(3, minmax(500px, auto)" }}>
+                            {!setSelectedPatient && patient.prescriptions.length > 0 && <Box style={{ display: "grid", gap: "10px", padding: "10px", gridTemplateColumns: "repeat(3, minmax(500px, auto)" }}>
                                 {patient.prescriptions.map((p, index: number) => (<Card.Root key={p.id}>
                                   <Card.Body gap="2">
                                     <Card.Title mt="2">
@@ -262,7 +261,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                       </Accordion.Item>
             ))}
         </Accordion.Root>
-        <StPagination page={page} setPage={setPage} totalRecords={patients.totalRecords} size={size} /></>}
+        <StPagination page={page} setPage={setPage} totalRecords={patients.totalRecords} size={size} siblingCount={setSelectedPatient ? 1 : 4} /></>}
     </Box>
   );
 }

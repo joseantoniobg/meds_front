@@ -216,7 +216,7 @@ export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
             ))}
           </Table.Body>
         </Table.Root>
-        <StPagination page={page} setPage={setPage} totalRecords={meds.totalRecords} size={size} /></>}
+        <StPagination page={page} setPage={setPage} totalRecords={meds.totalRecords} size={size} siblingCount={setSelectedMeds ? 1 : 4} /></>}
     </Box>
   );
 }

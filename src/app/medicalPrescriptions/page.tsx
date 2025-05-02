@@ -153,8 +153,8 @@ export default function MedicalPrescriptions() {
       <h1 style={{ fontSize: "16px" }}>Receita Médica</h1>
       <hr style={{ margin: "10px 0" }}/>
       <Box display={"contents"} width={"100%"}>
-          <Box style={{ display: "flex", marginBottom: "10px", alignItems: "top", justifyContent: "flex-start", gap: "20px" }}>
-            <Box width={"50%"} display={"flex"} flexDirection={"column"} alignItems={"stretch"} justifyContent={"center"} gap={"20px"}>
+          <Box className={styles.mainBox}>
+            <Box className={styles.halfContent}>
               <Box padding={"7px"} style={{border: "1px solid #222", borderRadius: "8px"}}>
                 <Box className={styles.scrollable} style={{ maxHeight: "300px", overflowY: "scroll", "overflowX": "hidden", padding: "20px" }}>
                   <Box marginTop={"-30px"}>
@@ -173,12 +173,12 @@ export default function MedicalPrescriptions() {
                 <ConfirmDialog key="confirmConference" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Conferência de Receitas" question="Deseja conferir as receitas do dia?" >
                   <StButton colorPalette={"blue"} icon={<FaEyeDropper />} label="Conferir Receitas do Dia" loading={false} />
                 </ConfirmDialog>
-                <ConfirmDialog key="printDaily" handleConfirm={() => handleDailyPrint(true)} loading={loading} title="Impressão de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
+                <ConfirmDialog key="printDaily" handleConfirm={() => handleDailyPrint(true)} loading={loading} title="Impresso de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
                   <StButton colorPalette={"orange"} icon={<FaBookMedical />} label="Imprimir Receitas do Dia" loading={false} />
                 </ConfirmDialog>
               </Box>
             </Box>
-            <Box display={"flex"} flexDirection={"column"} justifyContent={"space-between"} style={{ border: "1px solid rgb(39, 39, 39)", borderRadius: "10px", padding: "6px 17px 17px 17px" }}>
+            <Box className={styles.halfContentRight}>
               <Box>
                 <Box marginBottom={"15px"}>
                   <Box display={"flex"} flexDirection={"row"} alignItems={"center"} justifyContent={"flex-start"} gap={"10px"} marginBottom={"20px"}>

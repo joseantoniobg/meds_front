@@ -2,17 +2,17 @@
 
 import {
   Box,
+  Button,
   Flex,
   HStack,
-  IconButton,
   Link,
   Stack,
   useDisclosure
 } from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import NextLink from 'next/link';
 import { useColorModeValue } from '@/components/ui/color-mode';
 import { useAuth } from '@/contexts/auth.context';
+import { FaAngleUp, FaBars } from 'react-icons/fa';
 
 function NavLink({ children, href, onClick }: { children: string, href: string | undefined, onClick?: () => void }) {
   return (
@@ -59,13 +59,14 @@ export default function StNavBar() {
             <NavLink href={link.href} onClick={link.onClick} key={link.name}>{link.name}</NavLink>
           ))}
         </HStack>
-        <IconButton
-          size="md"
-          // icon={open ? <CloseIcon /> : <HamburgerIcon />}
+        <Button
+          variant={"subtle"}
           aria-label="Open Menu"
           display={{ md: 'none' }}
           onClick={open ? onClose : onOpen}
-        />
+        >
+          {open ? <FaAngleUp /> : <FaBars />}
+        </Button>
       </Flex>
       {open && (
         <Box pb={4} display={{ md: 'none' }}>

@@ -17,6 +17,7 @@ import { StepBox } from "@/components/StepBox/StepBox";
 import ConfirmDialog from "@/components/confirmDialog/ConfirmDialog";
 import { FaPrint } from "react-icons/fa";
 import { FaFloppyDisk, FaTrashCan } from "react-icons/fa6";
+import styles from "./MedicalPrescriptions.module.scss";
 
 export default function MedicalPrescriptions() {
   const { logout } = useAuth();
@@ -150,14 +151,18 @@ export default function MedicalPrescriptions() {
       <Box display={"contents"} width={"100%"}>
           <Box style={{ display: "flex", marginBottom: "10px", alignItems: "top", justifyContent: "flex-start", gap: "20px" }}>
             <Box width={"50%"} display={"flex"} flexDirection={"column"} alignItems={"stretch"} justifyContent={"center"} gap={"20px"}>
-              <Box style={{ maxHeight: "300px", overflowY: "scroll", padding: "20px", border: "1px solid #222", borderRadius: "8px" }}>
-                <Box marginTop={"-30px"}>
-                  <Patients selectedPatient={selectedPatient} setSelectedPatient={handleSelectedPatient} setPatientName={setPatientName} />
+              <Box padding={"7px"} style={{border: "1px solid #222", borderRadius: "8px"}}>
+                <Box className={styles.scrollable} style={{ maxHeight: "300px", overflowY: "scroll", "overflowX": "hidden", padding: "20px" }}>
+                  <Box marginTop={"-30px"}>
+                    <Patients selectedPatient={selectedPatient} setSelectedPatient={handleSelectedPatient} setPatientName={setPatientName} />
+                  </Box>
                 </Box>
               </Box>
-              <Box style={{ maxHeight: "300px", width: "100%", overflowY: "scroll", padding: "20px", border: "1px solid #222", borderRadius: "8px" }}>
-                <Box marginTop={"-30px"}>
-                  <Meds selectedMeds={medications} setSelectedMeds={handleMedications} />
+              <Box padding={"7px"} style={{border: "1px solid #222", borderRadius: "8px"}}>
+                <Box className={styles.scrollable} style={{ maxHeight: "300px", width: "100%", overflowY: "scroll", "overflowX": "hidden", padding: "20px" }}>
+                  <Box marginTop={"-30px"}>
+                    <Meds selectedMeds={medications} setSelectedMeds={handleMedications} />
+                  </Box>
                 </Box>
               </Box>
             </Box>

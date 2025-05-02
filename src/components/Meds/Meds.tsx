@@ -11,6 +11,7 @@ import { StTextArea } from "../TextArea/StTextArea";
 import { StCheckBox } from "../StCheckBox/StCheckBox";
 import { FaPlus, FaSearch } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
+import ItemsPerPage from "../ItemsPerPage/ItemsPerPage";
 
 type Props = {
   setSelectedMeds?:(id: string, name: string) => void;
@@ -192,7 +193,10 @@ export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
                     </Dialog.Positioner>
                   </Portal>
                 </Dialog.RootProvider>
-                  <h4 style={{ textAlign: "right", paddingBottom: "10px" }}>Exibindo página {meds.page} - Total: {meds.totalRecords} Medicamentos</h4>
+                  <Box display={"flex"} gap={"10px"} alignItems={"center"} justifyContent={"center"}>
+                    <h4 style={{ textAlign: "right" }}>Exibindo página {meds.page} - Total: {meds.totalRecords} Medicamentos</h4>
+                    <ItemsPerPage value={size} onChange={setSize} />
+                  </Box>
                 </div>
         <Table.Root key={"MedsTable"} size="sm" variant={"outline"}>
           <Table.Header>

@@ -12,6 +12,7 @@ import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import { StCheckBox } from "../StCheckBox/StCheckBox";
 import { FaPlus, FaPrint, FaSearch } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
+import ItemsPerPage from "../ItemsPerPage/ItemsPerPage";
 
 type Props = {
   selectedPatient?: string;
@@ -194,7 +195,10 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
             <StInput rootStyle={{ width: "130px" }} id="date" label="Data de Emissão:" value={date} onChange={(e) => setDate(formatStringDate(e.target.value))} mask="99/99/9999" />
             <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} /></>}
           </div>
-          <h4 style={{ textAlign: "right", paddingTop: "25px" }}>Exibindo página {patients.page} - Total: {patients.totalRecords} Pacientes</h4>
+          <Box display={"flex"} gap={"10px"} alignItems={"center"} justifyContent={"center"}>
+            <h4 style={{ textAlign: "right" }}>Exibindo página {patients.page} - Total: {patients.totalRecords} Pacientes</h4>
+            <ItemsPerPage value={size} onChange={setSize} />
+          </Box>
         </div>
         <Accordion.Root collapsible>
             {patients?.content && patients.content.map((patient) => (

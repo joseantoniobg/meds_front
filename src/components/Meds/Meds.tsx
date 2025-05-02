@@ -2,13 +2,15 @@ import { useAuth } from "@/contexts/auth.context";
 import performRequest from "@/lib/handleRequest";
 import { useEffect, useRef, useState } from "react";
 import { toaster } from "../ui/toaster";
-import { Box, CloseButton, createListCollection, Dialog, Portal, Select, Table, useDialog, useSelect } from "@chakra-ui/react";
+import { Box, CloseButton, createListCollection, Dialog, Portal, Select, Spinner, Table, useDialog, useSelect } from "@chakra-ui/react";
 import StForm from "../Form/StForm";
 import StInput from "../Input/StInput";
 import StButton from "../Button/StButton";
 import StPagination from "../Pagination/StPagination";
 import { StTextArea } from "../TextArea/StTextArea";
 import { StCheckBox } from "../StCheckBox/StCheckBox";
+import { FaPlus, FaSearch } from "react-icons/fa";
+import { FaPencil } from "react-icons/fa6";
 
 type Props = {
   setSelectedMeds?:(id: string, name: string) => void;
@@ -134,13 +136,17 @@ export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
   return (
     <Box display={"contents"}
     width={"100%"}>
-      <StForm horizontal label="Pesquisar" onClick={() => page != 1 ? setPage(1) : handleRequest()} loading={loading}>
-        <StInput id="name" label="Nome" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome do Medicamento" />
+      <StForm horizontal label="" icon={<FaSearch />} onClick={() => page != 1 ? setPage(1) : handleRequest()} loading={loading}>
+        <StInput id="name" label="Nome" value={name} onKeyDown={(e) => { if(e.key === 'Enter') page != 1 ? setPage(1) : handleRequest()}} onChange={(e) => setName(e.target.value)} placeholder="Nome do Medicamento" />
       </StForm>
-         <div style={{ display: "flex", marginBottom: "10px", justifyContent: "space-between", alignItems: "center" }}>
+      {loading &&
+      <Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"50vh"}>
+        <Spinner color="colorPalette.600" colorPalette={"teal"} size={"lg"} />
+      </Box>}
+      {!loading && <><div style={{ display: "flex", margin: "10px 0", justifyContent: "space-between", alignItems: "end" }}>
                 <Dialog.RootProvider value={dialog}>
                   <Dialog.Trigger asChild>
-                    <StButton label="Novo Medicamento" loading={false} type="button" />
+                    <StButton icon={<FaPlus />} colorPalette="green" label="Medicamento" loading={false} type="button" />
                   </Dialog.Trigger>
                   <Portal>
                     <Dialog.Backdrop />
@@ -205,12 +211,12 @@ export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
                                               if(setSelectedMeds) setSelectedMeds(med.id, med.name);
                                              }} />}{med.name}</Table.Cell>
                 <Table.Cell>{med.useMethod}</Table.Cell>
-                <Table.Cell><StButton label="Editar" loading={false} onClick={() => handleEdit(med.id, med.name, med.useMethod)} type="button" /></Table.Cell>
+                <Table.Cell><StButton label="" icon={<FaPencil />} colorPalette="blue" loading={false} onClick={() => handleEdit(med.id, med.name, med.useMethod)} type="button" /></Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
         </Table.Root>
-        <StPagination page={page} setPage={setPage} totalRecords={meds.totalRecords} size={size} />
+        <StPagination page={page} setPage={setPage} totalRecords={meds.totalRecords} size={size} /></>}
     </Box>
   );
 }

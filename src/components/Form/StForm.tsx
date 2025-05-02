@@ -5,6 +5,7 @@ import StButton from "../Button/StButton";
 
 interface CustomInputProps {
   label: string;
+  icon?: React.ReactNode;
   children?: React.ReactNode;
   title?: string;
   subtitle?: string;
@@ -13,7 +14,7 @@ interface CustomInputProps {
   horizontal?: boolean;
 }
 
-export default function StForm({ children, label, title, subtitle, onClick, loading, horizontal }: CustomInputProps) {
+export default function StForm({ children, label, title, subtitle, onClick, loading, horizontal, icon }: CustomInputProps) {
   return (
     <Fieldset.Root size="lg" >
     <Stack>
@@ -26,7 +27,7 @@ export default function StForm({ children, label, title, subtitle, onClick, load
       <Fieldset.Content display={horizontal ? "flex" : "contents"} flexDirection={"row"} alignItems={"flex-start"} justifyContent={"center"} gap={horizontal ? "10px" : "0px"} >
       {children}
       </Fieldset.Content>
-      <StButton style={{ marginBottom: horizontal ? '-8px' : 0 }} type="submit" onClick={onClick} label={label} loading={loading} />
+      <StButton style={{ marginBottom: horizontal ? '-24px' : 0 }} type="submit" onClick={onClick} label={label} loading={loading} icon={icon} />
     </Box>
   </Fieldset.Root>
   );

@@ -38,7 +38,7 @@ const Login: React.FC = () => {
         title: "Erro",
         description: "Usuário ou senha inválidos",
         type: "error",
-        duration: 3000,
+        duration: 1500,
       })
     }
     setLoading(false);

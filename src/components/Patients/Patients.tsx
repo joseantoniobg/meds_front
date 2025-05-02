@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/auth.context";
 import performRequest from "@/lib/handleRequest";
 import { useEffect, useState } from "react";
 import { toaster } from "../ui/toaster";
-import { Accordion, Avatar, Badge, Box, Button, Card, Checkbox, CloseButton, Dialog, Portal, Span, Table, useDialog } from "@chakra-ui/react";
+import { Accordion, Avatar, Badge, Box, Button, Card, Checkbox, CloseButton, Dialog, Portal, Span, Spinner, Table, useDialog } from "@chakra-ui/react";
 import StForm from "../Form/StForm";
 import StInput from "../Input/StInput";
 import StButton from "../Button/StButton";
@@ -10,6 +10,8 @@ import StPagination from "../Pagination/StPagination";
 import { formatDate, formatStringDate } from "@/lib/utils";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import { StCheckBox } from "../StCheckBox/StCheckBox";
+import { FaPlus, FaPrint, FaSearch } from "react-icons/fa";
+import { FaPencil } from "react-icons/fa6";
 
 type Props = {
   selectedPatient?: string;
@@ -155,15 +157,19 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
 
   return (
     <Box display={"contents"}>
-      <StForm horizontal label="Pesquisar" onClick={() => page != 1 ? setPage(1) : handleRequest()} loading={loading}>
-        <StInput id="name" label="Nome" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome do Paciente" />
+      <StForm horizontal label="" icon={<FaSearch />}  onClick={() => page != 1 ? setPage(1) : handleRequest()} loading={loading}>
+        <StInput id="name" label="Nome" value={name} onKeyDown={(e) => { if(e.key === 'Enter') page != 1 ? setPage(1) : handleRequest()}} onChange={(e) => setName(e.target.value)} placeholder="Nome do Paciente" />
         <StCheckBox label="Mostrar Apenas Receitas Válidas" value={onlyValid} setValue={setOnlyValid} marginTop="20px" />
       </StForm>
+      {loading &&
+            <Box display={"flex"} justifyContent={"center"} alignItems={"center"} height={"50vh"}>
+              <Spinner color="colorPalette.600" colorPalette={"teal"} size={"lg"} />
+            </Box>}
+        {!loading && <><div style={{ display: "flex", gap: "10px", justifyContent: "flex-start", alignItems: "center", marginTop: "10px" }}>
         <div style={{ display: "flex", marginBottom: "10px", justifyContent: "space-between", gap: "10px", alignItems: "center" }}>
-          <div style={{ display: "flex", gap: "10px", justifyContent: "flex-start", alignItems: "center", marginTop: "10px" }}>
             <Dialog.RootProvider value={dialog}>
               <Dialog.Trigger style={{ marginTop: "15px" }} asChild>
-                <StButton label="Novo Paciente" loading={false} type="button" />
+                <StButton style={{ marginTop: "25px" }} label="Paciente" colorPalette="green" loading={false} type="button" icon={<FaPlus />} />
               </Dialog.Trigger>
               <Portal>
                 <Dialog.Backdrop />
@@ -185,9 +191,9 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                 </Dialog.Positioner>
               </Portal>
             </Dialog.RootProvider>
-            <Badge colorPalette={"blue"} size={"lg"} style={{ marginLeft: "40px", marginTop: "25px" }}>{`${selectedMedicalPrescriptions.length} Receita(s) Selecionada(s)`}</Badge>
+            {!setSelectedPatient && <><Badge colorPalette={"blue"} size={"lg"} style={{ marginLeft: "40px", marginTop: "25px" }}>{`${selectedMedicalPrescriptions.length} Receita(s) Selecionada(s)`}</Badge>
             <StInput rootStyle={{ width: "130px" }} id="date" label="Data de Emissão:" value={date} onChange={(e) => setDate(formatStringDate(e.target.value))} mask="99/99/9999" />
-            <StButton label="Imprimir" loading={false} style={{ marginTop: "20px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} />
+            <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} /></>}
           </div>
           <h4 style={{ textAlign: "right", paddingTop: "25px" }}>Exibindo página {patients.page} - Total: {patients.totalRecords} Pacientes</h4>
         </div>
@@ -200,8 +206,8 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                               if(setPatientName) setPatientName(patient.name)
                              }} />}
                             <Span flex="1">{patient.name}</Span>
-                            <StButton label="Editar" loading={false} onClick={() => handleEdit(patient.id, patient.name)} type="button" />
-                            <StButton label="Imprimir" colorPalette="blue" loading={false} onClick={() => handlePrint(patient.id, '')} type="button" />
+                            <StButton label="" icon={<FaPencil />}  loading={false} onClick={() => handleEdit(patient.id, patient.name)} type="button" />
+                            <StButton label="" icon={<FaPrint />}  colorPalette="blue" loading={false} onClick={() => handlePrint(patient.id, '')} type="button" />
                           <Accordion.ItemIndicator />
                         </Accordion.ItemTrigger>
                         <Accordion.ItemContent>
@@ -256,7 +262,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                       </Accordion.Item>
             ))}
         </Accordion.Root>
-        <StPagination page={page} setPage={setPage} totalRecords={patients.totalRecords} size={size} />
+        <StPagination page={page} setPage={setPage} totalRecords={patients.totalRecords} size={size} /></>}
     </Box>
   );
 }

@@ -17,7 +17,7 @@ export default async function performRequest(method: string, url: string, header
         title: "Sucesso",
         description: message,
         type: "success",
-        duration: 3000,
+        duration: 1500,
       })
     }
 
@@ -27,7 +27,7 @@ export default async function performRequest(method: string, url: string, header
         title: "Erro",
         description: "Sessão expirada",
         type: "error",
-        duration: 3000,
+        duration: 1500,
       })
     }
 
@@ -36,7 +36,7 @@ export default async function performRequest(method: string, url: string, header
         title: "Erro",
         description: data.message,
         type: "error",
-        duration: 3000,
+        duration: 1500,
       })
     }
 

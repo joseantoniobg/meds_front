@@ -12,12 +12,14 @@ interface CustomInputProps {
   style?: React.CSSProperties;
   disabled?: boolean;
   colorPalette?: string;
+  icon?: React.ReactNode;
+  variant?: "outline" | "subtle" | "solid" | "surface" | "ghost" | "plain" | undefined;
 }
 
-export default function StButton({ label, type, onClick, loading, style, disabled, colorPalette }: CustomInputProps) {
+export default function StButton({ label, type, onClick, loading, style, disabled, colorPalette, icon, variant }: CustomInputProps) {
   return (
-    <Button type={type} onClick={onClick} loading={loading} style={style} disabled={disabled} colorPalette={colorPalette}>
-      {label}
+    <Button variant={variant ?? "subtle"} type={type} onClick={onClick} loading={loading} style={style} disabled={disabled} colorPalette={colorPalette}>
+     {icon} {label}
     </Button>
   );
 }

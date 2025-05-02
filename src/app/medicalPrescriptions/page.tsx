@@ -15,6 +15,8 @@ import StButton from "@/components/Button/StButton";
 import { Step } from "@/components/Step/Step";
 import { StepBox } from "@/components/StepBox/StepBox";
 import ConfirmDialog from "@/components/confirmDialog/ConfirmDialog";
+import { FaPrint } from "react-icons/fa";
+import { FaFloppyDisk, FaTrashCan } from "react-icons/fa6";
 
 export default function MedicalPrescriptions() {
   const { logout } = useAuth();
@@ -147,80 +149,89 @@ export default function MedicalPrescriptions() {
       <hr style={{ margin: "10px 0" }}/>
       <Box display={"contents"} width={"100%"}>
           <Box style={{ display: "flex", marginBottom: "10px", alignItems: "top", justifyContent: "flex-start", gap: "20px" }}>
-            <Box width={"50%"} display={"flex"} flexDirection={"column"} alignItems={"center"} justifyContent={"center"} gap={"20px"}>
-              <Box style={{ maxHeight: "300px", overflowY: "scroll", padding: "20px", flexGrow: 1,  border: "1px solid #222", borderRadius: "8px" }}>
+            <Box width={"50%"} display={"flex"} flexDirection={"column"} alignItems={"stretch"} justifyContent={"center"} gap={"20px"}>
+              <Box style={{ maxHeight: "300px", overflowY: "scroll", padding: "20px", border: "1px solid #222", borderRadius: "8px" }}>
                 <Box marginTop={"-30px"}>
                   <Patients selectedPatient={selectedPatient} setSelectedPatient={handleSelectedPatient} setPatientName={setPatientName} />
                 </Box>
               </Box>
-              <Box style={{ maxHeight: "300px", width: "100%", overflowY: "scroll", padding: "20px", flexGrow: 1, border: "1px solid #222", borderRadius: "8px" }}>
+              <Box style={{ maxHeight: "300px", width: "100%", overflowY: "scroll", padding: "20px", border: "1px solid #222", borderRadius: "8px" }}>
                 <Box marginTop={"-30px"}>
                   <Meds selectedMeds={medications} setSelectedMeds={handleMedications} />
                 </Box>
               </Box>
             </Box>
-            <Box margin={"25px"}>
-              <Box display={"flex"} flexDirection={"row"} alignItems={"center"} justifyContent={"flex-start"} gap={"10px"} marginBottom={"20px"}>
-                <Badge colorPalette={"green"} size={"lg"} style={{ marginTop: "10px" }}>{`${idMedicalPrescriptions.length} Receita(s) Emitida(s) prontas para impressão`}</Badge>
-                <StButton style={{ marginTop: "12px" }} colorPalette="red" label="Limpar" loading={loading} onClick={() => setIdMedicalPrescriptions([])} type="button" />
-              </Box>
-              <Box display={"flex"} flexDirection={"column"} alignItems={"flex-start"} justifyContent={"center"} gap={"10px"}>
-                <StepBox>
-                  <Step step={1} title="Selecione o Paciente" />
-                  <h3>Paciente Selecionado: {selectedPatient === '' ? 'NENHUM' : patientName}</h3>
-                </StepBox>
-                <Step step={2} title="Informe as medicações e formas de uso" />
-                <StepBox>
-                <h3>Medicações:</h3>
-                <Table.Root key={"patientsTable"} size="sm" variant={"outline"}>
-                  <Table.Header>
-                    <Table.Row>
-                        <Table.ColumnHeader key="medicamento">
-                          Medicamento
-                        </Table.ColumnHeader>
-                        <Table.ColumnHeader key="qtd">
-                          Quantidade
-                        </Table.ColumnHeader>
-                        <Table.ColumnHeader key="uso">
-                          Forma de Uso
-                        </Table.ColumnHeader>
-                        <Table.ColumnHeader key="acoes">
-                          Ações
-                        </Table.ColumnHeader>
-                    </Table.Row>
-                  </Table.Header>
-                  <Table.Body>
-                  {medications.map((med, index) => (
-                    <Table.Row key={med.id}>
-                      <Table.Cell>{med.name}</Table.Cell>
-                      <Table.Cell><StInput id={`${index}a`} value={med.quantity} onChange={(e) => alterMedData(med.id, e.target.value, med.instructionOfUse)} placeholder="Quantidade..." label="" /></Table.Cell>
-                      <Table.Cell><StInput id={`${index}b`} value={med.instructionOfUse} onChange={(e) => alterMedData(med.id, med.quantity,  e.target.value)}  placeholder="Forma de Uso..." label="" /></Table.Cell>
-                      <Table.Cell>
-                        <CloseButton key={med.id+"rm"} colorPalette={"red"} size="sm" onClick={() => removeMed(med.id)} />
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                  </Table.Body>
-                </Table.Root>
-                </StepBox>
-                <StepBox>
-                  <Step step={3} title="Informe os dados da receita" />
-                  <Box display={"flex"} flexDirection={"row"} alignItems={"flex-start"} justifyContent={"center"} gap={"20px"}>
-                    <StInput rootStyle={{ width: "190px" }} id="date" label="Data de Emissão" value={initialDate} onChange={(e) => setInitialDate(formatStringDate(e.target.value))} mask="99/99/9999" />
-                    <Field.Root>
-                      <Field.Label>Dias para Renovação:</Field.Label>
-                      <NumberInput.Root width="80px" value={`${renewal}`} onValueChange={({ value }) => setRenewal(+value)} min={0} max={500}>
-                        <NumberInput.Control />
-                        <NumberInput.Input />
-                      </NumberInput.Root>
-                    </Field.Root>
+            <Box display={"flex"} flexDirection={"column"} justifyContent={"space-between"} style={{ border: "1px solid rgb(39, 39, 39)", borderRadius: "10px", padding: "6px 17px 17px 17px" }}>
+              <Box>
+                <Box marginBottom={"15px"}>
+                  <Box display={"flex"} flexDirection={"row"} alignItems={"center"} justifyContent={"flex-start"} gap={"10px"} marginBottom={"20px"}>
+                    <Badge colorPalette={"green"} size={"lg"} style={{ marginTop: "10px" }}>{`${idMedicalPrescriptions.length} Receita(s) Emitida(s) prontas para impressão`}</Badge>
+                    <StButton style={{ marginTop: "12px" }} colorPalette="red" icon={<FaTrashCan />} label="" loading={loading} onClick={() => setIdMedicalPrescriptions([])} type="button" />
                   </Box>
-                </StepBox>
-                <Box display={"flex"} alignItems={"center"} justifyContent={"flex-start"} gap={"10px"}>
-                  <ConfirmDialog key="confirm" handleConfirm={handleSave} loading={loading} title="Salvar Receita" question="Deseja salvar a receita?" >
-                    <StButton colorPalette="green" label="Salvar" loading={loading} type="button" />
-                  </ConfirmDialog>
-                  <StButton style={{ marginTop: "12px" }} colorPalette="blue" label="Imprimir" loading={loading} onClick={handlePrint} type="button" />
+                  <hr style={{ margin: "0 -17px" }} />
+                </Box>
+                <Box display={"flex"} flexDirection={"column"} alignItems={"flex-start"} justifyContent={"center"} gap={"10px"}>
+                  <StepBox>
+                    <Step step={1} title="Selecione o Paciente" checked={selectedPatient !== ''} />
+                    <h3>Paciente Selecionado: {selectedPatient === '' ? 'NENHUM' : patientName}</h3>
+                  </StepBox>
+                  <Step step={2} title="Informe as medicações e formas de uso" checked={medications.some((m) => m.instructionOfUse !== '' && m.quantity !== '')} />
+                  <StepBox>
+                  <h3>Medicações:</h3>
+                  <Table.Root key={"patientsTable"} size="sm" variant={"outline"}>
+                    <Table.Header>
+                      <Table.Row>
+                          <Table.ColumnHeader key="medicamento">
+                            Medicamento
+                          </Table.ColumnHeader>
+                          <Table.ColumnHeader key="qtd">
+                            Quantidade
+                          </Table.ColumnHeader>
+                          <Table.ColumnHeader key="uso">
+                            Instruções
+                          </Table.ColumnHeader>
+                          <Table.ColumnHeader key="acoes">
+                            Ações
+                          </Table.ColumnHeader>
+                      </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                    {medications.map((med, index) => (
+                      <Table.Row key={med.id}>
+                        <Table.Cell>{med.name}</Table.Cell>
+                        <Table.Cell><StInput id={`${index}a`} value={med.quantity} onChange={(e) => alterMedData(med.id, e.target.value, med.instructionOfUse)} placeholder="Quantidade..." label="" /></Table.Cell>
+                        <Table.Cell><StInput id={`${index}b`} value={med.instructionOfUse} onChange={(e) => alterMedData(med.id, med.quantity,  e.target.value)}  placeholder="Forma de Uso..." label="" /></Table.Cell>
+                        <Table.Cell>
+                          <CloseButton key={med.id+"rm"} colorPalette={"red"} size="sm" onClick={() => removeMed(med.id)} />
+                        </Table.Cell>
+                      </Table.Row>
+                    ))}
+                    </Table.Body>
+                  </Table.Root>
+                  </StepBox>
+                  <StepBox>
+                    <Step step={3} title="Informe os dados da receita" checked={initialDate.length === 10} />
+                    <Box display={"flex"} flexDirection={"row"} alignItems={"flex-start"} justifyContent={"center"} gap={"20px"}>
+                      <StInput rootStyle={{ width: "190px" }} id="date" label="Data de Emissão" value={initialDate} onChange={(e) => setInitialDate(formatStringDate(e.target.value))} mask="99/99/9999" />
+                      <Field.Root>
+                        <Field.Label>Dias para Renovação:</Field.Label>
+                        <NumberInput.Root width="80px" value={`${renewal}`} onValueChange={({ value }) => setRenewal(+value)} min={0} max={500}>
+                          <NumberInput.Control />
+                          <NumberInput.Input />
+                        </NumberInput.Root>
+                      </Field.Root>
+                    </Box>
+                  </StepBox>
+                </Box>
+              </Box>
+
+              <Box>
+                <hr style={{ margin: "0 -17px" }} />
+                <Box display={"flex"} alignItems={"center"} gap={"10px"}>
+                    <ConfirmDialog key="confirm" handleConfirm={handleSave} loading={loading} title="Salvar Receita" question="Deseja salvar a receita?" >
+                      <StButton colorPalette="green" icon={<FaFloppyDisk />} label="Salvar" loading={loading} type="button" />
+                    </ConfirmDialog>
+                    <StButton style={{ marginTop: "12px" }} colorPalette="blue" icon={<FaPrint />} label="Imprimir" loading={loading} onClick={handlePrint} type="button" />
                 </Box>
               </Box>
             </Box>

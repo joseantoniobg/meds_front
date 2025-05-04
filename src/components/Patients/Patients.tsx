@@ -13,6 +13,7 @@ import { StCheckBox } from "../StCheckBox/StCheckBox";
 import { FaPlus, FaPrint, FaSearch } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 import ItemsPerPage from "../ItemsPerPage/ItemsPerPage";
+import styles from "./Patients.module.scss";
 
 type Props = {
   selectedPatient?: string;
@@ -214,8 +215,8 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                           <Accordion.ItemIndicator />
                         </Accordion.ItemTrigger>
                         <Accordion.ItemContent>
-                            {!setSelectedPatient && patient.prescriptions.length === 0 && <p>Paciente sem receitas</p>}
-                            {!setSelectedPatient && patient.prescriptions.length > 0 && <Box style={{ display: "grid", gap: "10px", padding: "10px", gridTemplateColumns: "repeat(3, minmax(500px, auto)" }}>
+                            {!setSelectedPatient && patient.prescriptions.length === 0 && <p style={{margin: "30px" }}>Paciente sem receitas</p>}
+                            {!setSelectedPatient && patient.prescriptions.length > 0 && <Box className={styles.mps}>
                                 {patient.prescriptions.map((p, index: number) => (<Card.Root key={p.id}>
                                   <Card.Body gap="2">
                                     <Card.Title mt="2">

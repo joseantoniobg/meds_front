@@ -10,7 +10,7 @@ import StPagination from "../Pagination/StPagination";
 import { formatDate, formatStringDate } from "@/lib/utils";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import { StCheckBox } from "../StCheckBox/StCheckBox";
-import { FaPlus, FaPrint, FaSearch } from "react-icons/fa";
+import { FaBan, FaPlus, FaPrint, FaSearch } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 import ItemsPerPage from "../ItemsPerPage/ItemsPerPage";
 import styles from "./Patients.module.scss";
@@ -144,7 +144,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
       filters.push(`medicalPrescriptionIds=${selectedMedicalPrescriptions.join(',')}`);
     }
 
-    if (selectedMedicalPrescriptions.length === 0) {
+    if (selectedMedicalPrescriptions.length === 0 && medicalPrescriptionId === '') {
       filters.push(`status=1`);
     }
 
@@ -275,9 +275,9 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                                   </Card.Body>
                                   <Card.Footer justifyContent="flex-end">
                                     <ConfirmDialog key={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
-                                      <Button key={p.id+'cancb'} loading={loading} colorPalette={"red"}>Cancelar</Button>
+                                      <StButton icon={<FaBan />} label="Cancelar" key={p.id+'cancb'} loading={loading} colorPalette={"red"} onClick={() => {}} />
                                     </ConfirmDialog>
-                                    <Button style={{ marginTop: "12px" }} onClick={() => handlePrint('', p.id)}>Imprimir</Button>
+                                    <StButton style={{ marginTop: "12px" }} label="Imprimir" loading={false} icon={<FaPrint />} onClick={() => handlePrint('', p.id)} />
                                   </Card.Footer>
                               </Card.Root>))}
                             </Box>}

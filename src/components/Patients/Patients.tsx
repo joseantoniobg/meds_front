@@ -14,6 +14,7 @@ import { FaPlus, FaPrint, FaSearch } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 import ItemsPerPage from "../ItemsPerPage/ItemsPerPage";
 import styles from "./Patients.module.scss";
+import StNumberInput from "../StNumberInput/StNumberInput";
 
 type Props = {
   selectedPatient?: string;
@@ -31,6 +32,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
   const [selectedMedicalPrescriptions, setSelectedMedicalPrescriptions] = useState<string[]>([]);
   const [date, setDate] = useState<string>(new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }));
   const [onlyValid, setOnlyValid] = useState<boolean>(false);
+  const [renewal, setRenewal] = useState<number>(0);
 
   const [patients, setPatients] = useState<any>({
     content: [],
@@ -142,6 +144,10 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
       filters.push(`medicalPrescriptionIds=${selectedMedicalPrescriptions.join(',')}`);
     }
 
+    if (renewal > 0) {
+      filters.push(`renewal=${renewal}`);
+    }
+
     if (medicalPrescriptionId !== '') {
       filters.push(`medicalPrescriptionIds=${medicalPrescriptionId}`);
       setSelectedMedicalPrescriptions([]);
@@ -154,6 +160,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
     window.open(`/api/mps/print?${filters.join('&')}`, '_blank');
     setSelectedMedicalPrescriptions([]);
     setDate(new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }));
+    setRenewal(0);
   }
 
   return (
@@ -192,9 +199,13 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                 </Dialog.Positioner>
               </Portal>
             </Dialog.RootProvider>
-            {!setSelectedPatient && <><Badge colorPalette={"blue"} size={"lg"} style={{ marginLeft: "40px", marginTop: "25px" }}>{`${selectedMedicalPrescriptions.length} Receita(s) Selecionada(s)`}</Badge>
-            <StInput rootStyle={{ width: "130px" }} id="date" label="Data de Emissão:" value={date} onChange={(e) => setDate(formatStringDate(e.target.value))} mask="99/99/9999" />
-            <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} /></>}
+            {!setSelectedPatient &&
+            <>
+              <Badge colorPalette={"blue"} size={"lg"} style={{ marginLeft: "20px", marginTop: "25px" }}>{`${selectedMedicalPrescriptions.length} Receita(s) Selecionada(s)`}</Badge>
+              <StInput rootStyle={{ width: "120px" }} id="date" label="Data de Emissão:" value={date} onChange={(e) => setDate(formatStringDate(e.target.value))} mask="99/99/9999" />
+              <StNumberInput style={{ width: "130px" }} value={renewal} setValue={setRenewal} label="Dias Renovação:" />
+              <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} />
+            </>}
           </div>
           <Box display={"flex"} gap={"10px"} alignItems={"center"} justifyContent={"center"}>
             <h4 style={{ textAlign: "right" }}>Exibindo página {patients.page} - Total: {patients.totalRecords} Pacientes</h4>
@@ -216,6 +227,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                         </Accordion.ItemTrigger>
                         <Accordion.ItemContent>
                             {!setSelectedPatient && patient.prescriptions.length === 0 && <p style={{margin: "30px" }}>Paciente sem receitas</p>}
+                            {!setSelectedPatient && patient.prescriptions.some((p) => p.type.id === 2) && <Badge style={{ marginLeft: "10px" }} size={"lg"} colorPalette={"yellow"}>Atenção: Paciente com Receita Azul</Badge>}
                             {!setSelectedPatient && patient.prescriptions.length > 0 && <Box className={styles.mps}>
                                 {patient.prescriptions.map((p, index: number) => (<Card.Root key={p.id}>
                                   <Card.Body gap="2">
@@ -226,7 +238,10 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                                         </Checkbox.Root> Receita #{index + 1}
                                       </Card.Title>
                                       <Box display="flex" gap="10px" alignItems="flex-start" flexDirection={"column"} paddingBottom={"20px"}>
-                                        <Badge style={{ flexGrow: 0 }} colorPalette={p.status.id === 1 ? "green" : "red"}>{p.status.description}</Badge>
+                                        <Box display="flex" gap="10px" alignItems="center">
+                                          <Badge style={{ flexGrow: 0 }} colorPalette={p.status.id === 1 ? "green" : "red"}>{p.status.description}</Badge>
+                                          {p.type.id === 2 && <Badge style={{ flexGrow: 0 }} colorPalette={"blue"}>Receita Azul</Badge>}
+                                        </Box>
                                         <p>Data Inicial: {formatDate(p.initialDate)}</p>
                                         <p>Renovação: {p.renewal} dias</p>
                                       </Box>

@@ -18,6 +18,8 @@ import ConfirmDialog from "@/components/confirmDialog/ConfirmDialog";
 import { FaBookMedical, FaEyeDropper, FaPrint, FaReceipt, FaRegWindowClose } from "react-icons/fa";
 import { FaFloppyDisk, FaTrashCan } from "react-icons/fa6";
 import styles from "./MedicalPrescriptions.module.scss";
+import StNumberInput from "@/components/StNumberInput/StNumberInput";
+import { StCheckBox } from "@/components/StCheckBox/StCheckBox";
 
 export default function MedicalPrescriptions() {
   const { logout } = useAuth();
@@ -30,6 +32,7 @@ export default function MedicalPrescriptions() {
   const [medications, setMedications] = useState<{ id: string, name: string, quantity: string, instructionOfUse: string }[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [idMedicalPrescriptions, setIdMedicalPrescriptions] = useState<string[]>([]);
+  const [blue, isBlue] = useState<boolean>(false);
 
   const handleSelectedPatient = (patient: string) => {
     if (patient === selectedPatient) {
@@ -111,6 +114,7 @@ export default function MedicalPrescriptions() {
         initialDate: formatStringDateToISO(initialDate),
         renewal,
         medicines: medications,
+        blue,
       });
 
     if (res.status !== 200) {
@@ -232,19 +236,13 @@ export default function MedicalPrescriptions() {
                   <StepBox>
                     <Step step={3} title="Informe os dados da receita" checked={initialDate.length === 10} />
                     <Box display={"flex"} flexDirection={"row"} alignItems={"flex-start"} justifyContent={"center"} gap={"20px"}>
-                      <StInput rootStyle={{ width: "190px" }} id="date" label="Data de Emissão" value={initialDate} onChange={(e) => setInitialDate(formatStringDate(e.target.value))} mask="99/99/9999" />
-                      <Field.Root>
-                        <Field.Label>Dias para Renovação:</Field.Label>
-                        <NumberInput.Root width="80px" value={`${renewal}`} onValueChange={({ value }) => setRenewal(+value)} min={0} max={500}>
-                          <NumberInput.Control />
-                          <NumberInput.Input />
-                        </NumberInput.Root>
-                      </Field.Root>
+                      <StInput rootStyle={{ width: "120px" }} id="date" label="Data de Emissão:" value={initialDate} onChange={(e) => setInitialDate(formatStringDate(e.target.value))} mask="99/99/9999" />
+                      <StNumberInput style={{ maxWidth: "120px" }} value={renewal} setValue={setRenewal} label="Dias renovação:" />
+                      <StCheckBox marginTop="35px" label="Receita Azul" value={blue} setValue={isBlue} />
                     </Box>
                   </StepBox>
                 </Box>
               </Box>
-
               <Box>
                 <hr style={{ margin: "0 -17px" }} />
                 <Box display={"flex"} alignItems={"center"} gap={"10px"}>

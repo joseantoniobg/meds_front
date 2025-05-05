@@ -20,6 +20,7 @@ import { FaFloppyDisk, FaTrashCan } from "react-icons/fa6";
 import styles from "./MedicalPrescriptions.module.scss";
 import StNumberInput from "@/components/StNumberInput/StNumberInput";
 import { StCheckBox } from "@/components/StCheckBox/StCheckBox";
+import { StTextArea } from "@/components/TextArea/StTextArea";
 
 export default function MedicalPrescriptions() {
   const { logout } = useAuth();
@@ -224,7 +225,7 @@ export default function MedicalPrescriptions() {
                       <Table.Row key={med.id}>
                         <Table.Cell>{med.name}</Table.Cell>
                         <Table.Cell><StInput id={`${index}a`} value={med.quantity} onChange={(e) => alterMedData(med.id, e.target.value, med.instructionOfUse)} placeholder="Quantidade..." label="" /></Table.Cell>
-                        <Table.Cell><StInput id={`${index}b`} value={med.instructionOfUse} onChange={(e) => alterMedData(med.id, med.quantity,  e.target.value)}  placeholder="Forma de Uso..." label="" /></Table.Cell>
+                        <Table.Cell><StTextArea id={`${index}b`} value={med.instructionOfUse} onChange={(e) => alterMedData(med.id, med.quantity, e.target.value)}  placeholder="Forma de Uso..." label="" /></Table.Cell>
                         <Table.Cell>
                           <CloseButton key={med.id+"rm"} colorPalette={"red"} size="sm" onClick={() => removeMed(med.id)} />
                         </Table.Cell>

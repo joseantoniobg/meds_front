@@ -9,16 +9,16 @@ type Props = {
   placeholder?: string,
   helperText?: string,
   value: string,
-  setValue: (value: string) => void,
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void,
 }
 
-export const StTextArea = ({ id, label, required, helperText, placeholder, value, setValue }: Props) => {
+export const StTextArea = ({ id, label, required, helperText, placeholder, value, onChange }: Props) => {
   return (
       <Field.Root required={required}>
         <Field.Label>
           {label} {required && <Field.RequiredIndicator />}
         </Field.Label>
-        <Textarea id={id} value={value} onChange={(e) => setValue(e.target.value)} placeholder={placeholder} variant="subtle" />
+        <Textarea id={id} value={value} onChange={onChange} placeholder={placeholder} variant="subtle" />
         <Field.HelperText>{helperText}</Field.HelperText>
       </Field.Root>
   )

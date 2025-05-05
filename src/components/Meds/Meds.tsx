@@ -157,7 +157,7 @@ export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
                           <Dialog.Title>Novo Medicamento</Dialog.Title>
                         </Dialog.Header>
                         <Dialog.Body>
-                          <StTextArea id="mewMed" label="Nome" value={newName} setValue={setNewName} placeholder="Nome do Medicamento" />
+                          <StTextArea id="mewMed" label="Nome" value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nome do Medicamento" />
                           <Select.RootProvider value={useMethodSelect} size="sm" width="320px">
                             <Select.HiddenSelect />
                             <Select.Label>Modo de uso</Select.Label>

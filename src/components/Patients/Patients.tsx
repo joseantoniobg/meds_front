@@ -7,11 +7,11 @@ import StForm from "../Form/StForm";
 import StInput from "../Input/StInput";
 import StButton from "../Button/StButton";
 import StPagination from "../Pagination/StPagination";
-import { formatDate, formatStringDate } from "@/lib/utils";
+import { daysBetween, formatDate, formatStringDate, formatStringDateToISO, getCurrentDateDDMMYYYY, getCurrentDateYYYYMMDD } from "@/lib/utils";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import { StCheckBox } from "../StCheckBox/StCheckBox";
-import { FaBan, FaPlus, FaPrint, FaSearch } from "react-icons/fa";
-import { FaPencil } from "react-icons/fa6";
+import { FaAt, FaBan, FaCalendarTimes, FaPlus, FaPrint, FaSearch } from "react-icons/fa";
+import { FaPencil, FaVirusCovid, FaVirusCovidSlash } from "react-icons/fa6";
 import ItemsPerPage from "../ItemsPerPage/ItemsPerPage";
 import styles from "./Patients.module.scss";
 import StNumberInput from "../StNumberInput/StNumberInput";
@@ -30,7 +30,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
   const [id, setId] = useState<string>('');
   const [newName, setNewName] = useState<string>('');
   const [selectedMedicalPrescriptions, setSelectedMedicalPrescriptions] = useState<string[]>([]);
-  const [date, setDate] = useState<string>(new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }));
+  const [date, setDate] = useState<string>(getCurrentDateDDMMYYYY());
   const [onlyValid, setOnlyValid] = useState<boolean>(false);
   const [renewal, setRenewal] = useState<number>(0);
 
@@ -163,7 +163,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
 
     window.open(`/api/mps/print?${filters.join('&')}`, '_blank');
     setSelectedMedicalPrescriptions([]);
-    setDate(new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }));
+    setDate(getCurrentDateDDMMYYYY());
     setRenewal(0);
   }
 
@@ -203,13 +203,12 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                 </Dialog.Positioner>
               </Portal>
             </Dialog.RootProvider>
-            {!setSelectedPatient &&
             <>
               <Badge colorPalette={"blue"} size={"lg"} style={{ marginLeft: "20px", marginTop: "25px" }}>{`${selectedMedicalPrescriptions.length} Receita(s) Selecionada(s)`}</Badge>
               <StInput rootStyle={{ width: "120px" }} id="date" label="Data de Emissão:" value={date} onChange={(e) => setDate(formatStringDate(e.target.value))} mask="99/99/9999" />
               <StNumberInput style={{ width: "130px" }} value={renewal} setValue={setRenewal} label="Dias Renovação:" />
               <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} />
-            </>}
+            </>
           </div>
           <Box display={"flex"} gap={"10px"} alignItems={"center"} justifyContent={"center"}>
             <h4 style={{ textAlign: "right" }}>Exibindo página {patients.page} - Total: {patients.totalRecords} Pacientes</h4>
@@ -219,20 +218,22 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
         <Accordion.Root collapsible>
             {patients?.content && patients.content.map((patient) => (
                       <Accordion.Item key={patient.id} value={patient.name}>
-                        <Accordion.ItemTrigger>
-                            {setSelectedPatient && <StCheckBox label={""} value={selectedPatient === patient.id} setValue={() => {
-                              if(setSelectedPatient) setSelectedPatient(patient.id)
-                              if(setPatientName) setPatientName(patient.name)
-                             }} />}
-                            <Span flex="1">{patient.name}</Span>
-                            <StButton label="" icon={<FaPencil />}  loading={false} onClick={() => handleEdit(patient.id, patient.name)} type="button" />
-                            <StButton label="" icon={<FaPrint />}  colorPalette="blue" loading={false} onClick={() => handlePrint(patient.id, '')} type="button" />
-                          <Accordion.ItemIndicator />
-                        </Accordion.ItemTrigger>
+                        <Box display="flex" gap="10px" alignItems="center" justifyContent="space-between" padding={"10px 20px"}>
+                              {setSelectedPatient && <StCheckBox label={""} value={selectedPatient === patient.id} setValue={() => {
+                                if(setSelectedPatient) setSelectedPatient(patient.id)
+                                if(setPatientName) setPatientName(patient.name)
+                              }} />}
+                          <Accordion.ItemTrigger>
+                              <Span>{patient.name}</Span>
+                            <Accordion.ItemIndicator />
+                          </Accordion.ItemTrigger>
+                          <StButton label="" icon={<FaPencil />}  loading={false} onClick={() => handleEdit(patient.id, patient.name)} type="button" />
+                          <StButton label="" icon={<FaPrint />}  colorPalette="blue" loading={false} onClick={() => handlePrint(patient.id, '')} type="button" />
+                        </Box>
                         <Accordion.ItemContent>
-                            {!setSelectedPatient && patient.prescriptions.length === 0 && <p style={{margin: "30px" }}>Paciente sem receitas</p>}
-                            {!setSelectedPatient && patient.prescriptions.some((p) => p.type.id === 2) && <Badge style={{ marginLeft: "10px" }} size={"lg"} colorPalette={"yellow"}>Atenção: Paciente com Receita Azul</Badge>}
-                            {!setSelectedPatient && patient.prescriptions.length > 0 && <Box className={styles.mps}>
+                            {patient.prescriptions.length === 0 && <p style={{margin: "30px" }}>Paciente sem receitas</p>}
+                            {patient.prescriptions.some((p) => p.type.id === 2) && <Badge style={{ marginLeft: "10px" }} size={"lg"} colorPalette={"yellow"}><FaVirusCovid/> Atenção: Paciente com Receita Azul</Badge>}
+                            {patient.prescriptions.length > 0 && <Box className={styles.mps}>
                                 {patient.prescriptions.map((p, index: number) => (<Card.Root key={p.id}>
                                   <Card.Body gap="2">
                                     <Card.Title mt="2">
@@ -241,13 +242,15 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                                           <Checkbox.Control style={{ margin: "3px 5px 0 0", border: "1px solid #aaa" }} />
                                         </Checkbox.Root> Receita #{index + 1}
                                       </Card.Title>
-                                      <Box display="flex" gap="10px" alignItems="flex-start" flexDirection={"column"} paddingBottom={"20px"}>
+                                      <Box display="flex" gap="10px" alignItems="flex-start" flexDirection={"column"} paddingBottom={"25px"} paddingTop={"5px"}>
                                         <Box display="flex" gap="10px" alignItems="center">
                                           <Badge style={{ flexGrow: 0 }} colorPalette={p.status.id === 1 ? "green" : "red"}>{p.status.description}</Badge>
                                           {p.type.id === 2 && <Badge style={{ flexGrow: 0 }} colorPalette={"blue"}>Receita Azul</Badge>}
+                                          {p.renewalDate && <Badge style={{ flexGrow: 0 }} colorPalette="yellow"><FaPrint />{`Renova em ${daysBetween(getCurrentDateYYYYMMDD(), p.renewalDate)} dias`}</Badge>}
                                         </Box>
-                                        <p>Data Inicial: {formatDate(p.initialDate)}</p>
+                                        <p>Última Impressão: {formatDate(p.lastPrinted)}</p>
                                         <p>Renovação: {p.renewal} dias</p>
+                                        <p>Renova em: {formatDate(p.renewalDate, true)}</p>
                                       </Box>
                                       <Table.Root key={"patientsTable"} size="sm" variant={"outline"}>
                                                           <Table.Header>
@@ -275,9 +278,9 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                                   </Card.Body>
                                   <Card.Footer justifyContent="flex-end">
                                     <ConfirmDialog key={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
-                                      <StButton icon={<FaBan />} label="Cancelar" key={p.id+'cancb'} loading={loading} colorPalette={"red"} onClick={() => {}} />
+                                      <StButton key={p.id + 'btnCancel'} icon={<FaBan />} label="Cancelar" loading={loading} colorPalette={"red"} onClick={() => {}} />
                                     </ConfirmDialog>
-                                    <StButton style={{ marginTop: "12px" }} label="Imprimir" loading={false} icon={<FaPrint />} onClick={() => handlePrint('', p.id)} />
+                                    <StButton key={p.id + 'btnPrint'} style={{ marginTop: "12px" }} label="Imprimir" loading={false} icon={<FaPrint />} onClick={() => handlePrint('', p.id)} />
                                   </Card.Footer>
                               </Card.Root>))}
                             </Box>}

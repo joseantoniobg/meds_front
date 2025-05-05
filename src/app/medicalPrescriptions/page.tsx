@@ -10,13 +10,13 @@ import StInput from "@/components/Input/StInput";
 import Patients from "@/components/Patients/Patients";
 import Meds from "@/components/Meds/Meds";
 import StPage from "@/components/StPage/StPage";
-import { formatStringDate, formatStringDateToISO } from "@/lib/utils";
+import { formatStringDate, formatStringDateToISO, getCurrentDateDDMMYYYY } from "@/lib/utils";
 import StButton from "@/components/Button/StButton";
 import { Step } from "@/components/Step/Step";
 import { StepBox } from "@/components/StepBox/StepBox";
 import ConfirmDialog from "@/components/confirmDialog/ConfirmDialog";
-import { FaBookMedical, FaEyeDropper, FaPrint, FaReceipt, FaRegWindowClose } from "react-icons/fa";
-import { FaFloppyDisk, FaTrashCan } from "react-icons/fa6";
+import { FaBookMedical, FaEye, FaEyeDropper, FaPrint, FaReceipt, FaRegWindowClose } from "react-icons/fa";
+import { FaEyeLowVision, FaFloppyDisk, FaTrashCan } from "react-icons/fa6";
 import styles from "./MedicalPrescriptions.module.scss";
 import StNumberInput from "@/components/StNumberInput/StNumberInput";
 import { StCheckBox } from "@/components/StCheckBox/StCheckBox";
@@ -28,12 +28,13 @@ export default function MedicalPrescriptions() {
   const [selectedPatient, setSelectedPatient] = useState<string>("");
   const [patientName, setPatientName] = useState<string>("");
 
-  const [initialDate, setInitialDate] = useState<string>(new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }));
+  const [initialDate, setInitialDate] = useState<string>(getCurrentDateDDMMYYYY());
   const [renewal, setRenewal] = useState<number>(28);
   const [medications, setMedications] = useState<{ id: string, name: string, quantity: string, instructionOfUse: string }[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [idMedicalPrescriptions, setIdMedicalPrescriptions] = useState<string[]>([]);
   const [blue, isBlue] = useState<boolean>(false);
+  const [showMeds, setShowMeds] = useState<boolean>(false);
 
   const handleSelectedPatient = (patient: string) => {
     if (patient === selectedPatient) {
@@ -161,26 +162,31 @@ export default function MedicalPrescriptions() {
           <Box className={styles.mainBox}>
             <Box className={styles.halfContent}>
               <Box padding={"7px"} style={{border: "1px solid #222", borderRadius: "8px"}}>
-                <Box className={styles.scrollable} style={{ maxHeight: "300px", overflowY: "scroll", "overflowX": "hidden", padding: "20px" }}>
+                <Box className={styles.scrollable} style={{ height: showMeds ? "380px" : "700px", overflowY: "scroll", "overflowX": "hidden", padding: "20px" }}>
                   <Box marginTop={"-30px"}>
                     <Patients selectedPatient={selectedPatient} setSelectedPatient={handleSelectedPatient} setPatientName={setPatientName} />
                   </Box>
                 </Box>
               </Box>
-              <Box padding={"7px"} style={{border: "1px solid #222", borderRadius: "8px"}}>
-                <Box className={styles.scrollable} style={{ maxHeight: "300px", width: "100%", overflowY: "scroll", "overflowX": "hidden", padding: "20px" }}>
+              {showMeds &&
+              <Box className={showMeds ? styles.medsBox : ''} padding={"7px"} style={{border: "1px solid #222", borderRadius: "8px"}}>
+                <Box className={styles.scrollable} style={{ height: "300px", width: "100%", overflowY: "scroll", "overflowX": "hidden", padding: "20px" }}>
                   <Box marginTop={"-30px"}>
                     <Meds selectedMeds={medications} setSelectedMeds={handleMedications} />
                   </Box>
                 </Box>
-              </Box>
-              <Box display={"flex"} gap={"10px"} marginTop={"-25px"}>
-                <ConfirmDialog key="confirmConference" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Conferência de Receitas" question="Deseja conferir as receitas do dia?" >
-                  <StButton colorPalette={"blue"} icon={<FaEyeDropper />} label="Conferir Receitas do Dia" loading={false} />
-                </ConfirmDialog>
-                <ConfirmDialog key="printDaily" handleConfirm={() => handleDailyPrint(true)} loading={loading} title="Impresso de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
-                  <StButton colorPalette={"orange"} icon={<FaBookMedical />} label="Imprimir Receitas do Dia" loading={false} />
-                </ConfirmDialog>
+              </Box>}
+              <Box display={"flex"} gap={"10px"} marginTop={"-25px"} alignItems={"center"} justifyContent={"space-between"}>
+
+                <StButton style={{ marginTop: "15px" }} colorPalette={"cyan"} icon={showMeds ? <FaEyeLowVision /> : <FaEye />} label={`${!showMeds ? 'Exibir' : 'Ocultar'} Medicamentos`} loading={false} onClick={() => setShowMeds(!showMeds)} type="button" />
+                <Box display={"flex"} gap={"10px"} alignItems={"center"}>
+                  <ConfirmDialog key="confirmConference" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Conferência de Receitas" question="Deseja conferir as receitas do dia?" >
+                    <StButton colorPalette={"blue"} icon={<FaEyeDropper />} label="Conferir Receitas do Dia" loading={false} />
+                  </ConfirmDialog>
+                  <ConfirmDialog key="printDaily" handleConfirm={() => handleDailyPrint(true)} loading={loading} title="Impresso de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
+                    <StButton colorPalette={"orange"} icon={<FaBookMedical />} label="Imprimir Receitas do Dia" loading={false} />
+                  </ConfirmDialog>
+                </Box>
               </Box>
             </Box>
             <Box className={styles.halfContentRight}>

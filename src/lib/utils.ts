@@ -1,10 +1,31 @@
-export function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
-  const year = date.getFullYear();
+export function formatDate(dateString: string, weekDay?: boolean) {
+  if (!dateString) return '-';
+  const date = new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 
-  return `${day}/${month}/${year}`;
+  if (weekDay) {
+    const dateWithWeekday = new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC', weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' });
+    const weekDay = dateWithWeekday.split(',');
+
+    return `${weekDay[1]} (${weekDay[0]})`;
+  }
+
+  return date;
+}
+
+export const getCurrentDateDDMMYYYY = () => {
+  return new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+}
+
+export const getCurrentDateYYYYMMDD = () => {
+  return new Date().toDateString().split('T')[0];
+}
+
+export const daysBetween = (date1: string, date2: string): string => {
+  const date1d = new Date(date1);
+  const date2d = new Date(date2);
+  const timeDiff = Math.abs(date2d.getTime() - date1d.getTime());
+  const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  return `${daysDiff}`;
 }
 
 export const formatStringDate = (dateString: string) => {

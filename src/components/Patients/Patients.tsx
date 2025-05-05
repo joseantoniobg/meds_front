@@ -144,6 +144,10 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
       filters.push(`medicalPrescriptionIds=${selectedMedicalPrescriptions.join(',')}`);
     }
 
+    if (selectedMedicalPrescriptions.length === 0) {
+      filters.push(`status=1`);
+    }
+
     if (renewal > 0) {
       filters.push(`renewal=${renewal}`);
     }

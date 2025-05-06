@@ -5,7 +5,7 @@ import StButton from "../Button/StButton";
 import { useState } from "react";
 
 interface CustomInputProps {
-  key: string;
+  keyName: string;
   children: React.ReactNode;
   handleConfirm: () => void;
   title: string;
@@ -13,10 +13,10 @@ interface CustomInputProps {
   loading: boolean;
 }
 
-export default function ConfirmDialog({ key, children, handleConfirm, title, question, loading }: CustomInputProps) {
+export default function ConfirmDialog({ keyName, children, handleConfirm, title, question, loading }: CustomInputProps) {
   const [open, setOpen] = useState(false);
   return (
-    <Dialog.Root key={key} open={open} onOpenChange={(d) => setOpen(d.open)}>
+    <Dialog.Root key={keyName} open={open} onOpenChange={(d) => setOpen(d.open)}>
     <Dialog.Trigger style={{ marginTop: "15px" }} asChild>
       {children}
     </Dialog.Trigger>

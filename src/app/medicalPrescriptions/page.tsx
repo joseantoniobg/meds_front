@@ -180,10 +180,10 @@ export default function MedicalPrescriptions() {
 
                 <StButton style={{ marginTop: "15px" }} colorPalette={"cyan"} icon={showMeds ? <FaEyeLowVision /> : <FaEye />} label={`${!showMeds ? 'Exibir' : 'Ocultar'} Medicamentos`} loading={false} onClick={() => setShowMeds(!showMeds)} type="button" />
                 <Box display={"flex"} gap={"10px"} alignItems={"center"}>
-                  <ConfirmDialog key="confirmConference" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Conferência de Receitas" question="Deseja conferir as receitas do dia?" >
+                  <ConfirmDialog keyName="confirmConference" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Conferência de Receitas" question="Deseja conferir as receitas do dia?" >
                     <StButton colorPalette={"blue"} icon={<FaEyeDropper />} label="Conferir Receitas do Dia" loading={false} />
                   </ConfirmDialog>
-                  <ConfirmDialog key="printDaily" handleConfirm={() => handleDailyPrint(true)} loading={loading} title="Impresso de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
+                  <ConfirmDialog keyName="printDaily" handleConfirm={() => handleDailyPrint(true)} loading={loading} title="Impresso de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
                     <StButton colorPalette={"orange"} icon={<FaBookMedical />} label="Imprimir Receitas do Dia" loading={false} />
                   </ConfirmDialog>
                 </Box>
@@ -253,7 +253,7 @@ export default function MedicalPrescriptions() {
               <Box>
                 <hr style={{ margin: "0 -17px" }} />
                 <Box display={"flex"} alignItems={"center"} gap={"10px"}>
-                    <ConfirmDialog key="confirm" handleConfirm={handleSave} loading={loading} title="Salvar Receita" question="Deseja salvar a receita?" >
+                    <ConfirmDialog keyName="confirm" handleConfirm={handleSave} loading={loading} title="Salvar Receita" question="Deseja salvar a receita?" >
                       <StButton colorPalette="green" icon={<FaFloppyDisk />} label="Salvar" loading={loading} type="button" />
                     </ConfirmDialog>
                     <StButton style={{ marginTop: "12px" }} colorPalette="blue" icon={<FaPrint />} label="Imprimir" loading={loading} onClick={handlePrint} type="button" />

@@ -11,7 +11,7 @@ import { daysBetween, formatDate, formatStringDate, formatStringDateToISO, getCu
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import { StCheckBox } from "../StCheckBox/StCheckBox";
 import { FaAt, FaBan, FaCalendarTimes, FaPlus, FaPrint, FaSearch } from "react-icons/fa";
-import { FaPencil, FaVirusCovid, FaVirusCovidSlash } from "react-icons/fa6";
+import { FaKitMedical, FaPencil, FaVirusCovid, FaVirusCovidSlash } from "react-icons/fa6";
 import ItemsPerPage from "../ItemsPerPage/ItemsPerPage";
 import styles from "./Patients.module.scss";
 import StNumberInput from "../StNumberInput/StNumberInput";
@@ -33,6 +33,9 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
   const [date, setDate] = useState<string>(getCurrentDateDDMMYYYY());
   const [onlyValid, setOnlyValid] = useState<boolean>(false);
   const [renewal, setRenewal] = useState<number>(0);
+  const [renewalDate, setRenewalDate] = useState<string>('');
+  const [lastPrinted, setLastPrinted] = useState<string>('');
+  const [totalMds, setTotalMds] = useState<number>(0);
 
   const [patients, setPatients] = useState<any>({
     content: [],
@@ -49,7 +52,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
   const handleRequest = async () => {
     setLoading(true);
 
-    const res = await performRequest("GET",`/api/patients?page=${page}&size=${size}&name=${name}${onlyValid ? '&status=1' : ''}`, {
+    const res = await performRequest("GET",`/api/patients?page=${page}&size=${size}&name=${name}${onlyValid ? '&status=1' : ''}${renewalDate.length === 10 ? `&renewalDate=${formatStringDateToISO(renewalDate)}` : ''}${lastPrinted.length === 10 ? `&lastPrinted=${formatStringDateToISO(lastPrinted)}` : ''}`, {
             "Content-Type": "application/json",
           }, setLoading,
           "Dados carregados com sucesso",
@@ -57,6 +60,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
           logout);
 
     setPatients(res.data);
+    setTotalMds(res.data.totalMds);
     setLoading(false);
   };
 
@@ -171,6 +175,8 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
     <Box display={"contents"}>
       <StForm horizontal label="" icon={<FaSearch />}  onClick={() => page != 1 ? setPage(1) : handleRequest()} loading={loading}>
         <StInput id="name" label="Nome" value={name} onKeyDown={(e) => { if(e.key === 'Enter') page != 1 ? setPage(1) : handleRequest()}} onChange={(e) => setName(e.target.value)} placeholder="Nome do Paciente" />
+        <StInput rootStyle={{ width: "130px" }} id="date" label="Impressão:" value={lastPrinted} onChange={(e) => setLastPrinted(formatStringDate(e.target.value))} mask="99/99/9999" />
+        <StInput rootStyle={{ width: "130px" }} id="date" label="Renovação:" value={renewalDate} onChange={(e) => setRenewalDate(formatStringDate(e.target.value))} mask="99/99/9999" />
         <StCheckBox label="Mostrar Apenas Receitas Válidas" value={onlyValid} setValue={setOnlyValid} marginTop="20px" />
       </StForm>
       {loading &&
@@ -210,9 +216,12 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
               <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} />
             </>
           </div>
-          <Box display={"flex"} gap={"10px"} alignItems={"center"} justifyContent={"center"}>
-            <h4 style={{ textAlign: "right" }}>Exibindo página {patients.page} - Total: {patients.totalRecords} Pacientes</h4>
-            <ItemsPerPage value={size} onChange={setSize} />
+          <Box display={"flex"} gap={"10px"} flexDirection={"column"} alignItems={"flex-end"} justifyContent={"center"}>
+            <Box display={"flex"} gap={"10px"} alignItems={"center"} justifyContent={"center"}>
+              <h4 style={{ textAlign: "right" }}>Exibindo página {patients.page} - Total: {patients.totalRecords} Pacientes</h4>
+              <ItemsPerPage value={size} onChange={setSize} />
+            </Box>
+            <Badge colorPalette={"green"} size={"lg"} style={{ marginTop: "-5px" }}><FaKitMedical /> {`${totalMds} Receita(s) Totais(s)`}</Badge>
           </Box>
         </div>
         <Accordion.Root collapsible>
@@ -277,7 +286,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                                       </Table.Root>
                                   </Card.Body>
                                   <Card.Footer justifyContent="flex-end">
-                                    <ConfirmDialog key={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
+                                    <ConfirmDialog keyName={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
                                       <StButton key={p.id + 'btnCancel'} icon={<FaBan />} label="Cancelar" loading={loading} colorPalette={"red"} onClick={() => {}} />
                                     </ConfirmDialog>
                                     <StButton key={p.id + 'btnPrint'} style={{ marginTop: "12px" }} label="Imprimir" loading={false} icon={<FaPrint />} onClick={() => handlePrint('', p.id)} />

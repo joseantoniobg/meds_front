@@ -175,8 +175,8 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
     <Box display={"contents"}>
       <StForm horizontal label="" icon={<FaSearch />}  onClick={() => page != 1 ? setPage(1) : handleRequest()} loading={loading}>
         <StInput id="name" label="Nome" value={name} onKeyDown={(e) => { if(e.key === 'Enter') page != 1 ? setPage(1) : handleRequest()}} onChange={(e) => setName(e.target.value)} placeholder="Nome do Paciente" />
-        <StInput rootStyle={{ width: "130px" }} id="date" label="Impressão:" value={lastPrinted} onChange={(e) => setLastPrinted(formatStringDate(e.target.value))} mask="99/99/9999" />
-        <StInput rootStyle={{ width: "130px" }} id="date" label="Renovação:" value={renewalDate} onChange={(e) => setRenewalDate(formatStringDate(e.target.value))} mask="99/99/9999" />
+        <StInput rootStyle={{ width: "160px" }} id="date" label="Impressão:" value={lastPrinted} onChange={(e) => setLastPrinted(formatStringDate(e.target.value))} mask="99/99/9999" />
+        <StInput rootStyle={{ width: "160px" }} id="date" label="Renovação:" value={renewalDate} onChange={(e) => setRenewalDate(formatStringDate(e.target.value))} mask="99/99/9999" />
         <StCheckBox label="Mostrar Apenas Receitas Válidas" value={onlyValid} setValue={setOnlyValid} marginTop="20px" />
       </StForm>
       {loading &&

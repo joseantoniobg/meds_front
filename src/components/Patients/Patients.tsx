@@ -7,7 +7,7 @@ import StForm from "../Form/StForm";
 import StInput from "../Input/StInput";
 import StButton from "../Button/StButton";
 import StPagination from "../Pagination/StPagination";
-import { daysBetween, formatDate, formatStringDate, formatStringDateToISO, getCurrentDateDDMMYYYY, getCurrentDateYYYYMMDD } from "@/lib/utils";
+import { daysBetweenNow, formatDate, formatStringDate, formatStringDateToISO, getCurrentDateDDMMYYYY, getCurrentDateYYYYMMDD } from "@/lib/utils";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import { StCheckBox } from "../StCheckBox/StCheckBox";
 import { FaAt, FaBan, FaCalendarTimes, FaPlus, FaPrint, FaSearch } from "react-icons/fa";
@@ -255,7 +255,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
                                         <Box display="flex" gap="10px" alignItems="center">
                                           <Badge style={{ flexGrow: 0 }} colorPalette={p.status.id === 1 ? "green" : "red"}>{p.status.description}</Badge>
                                           {p.type.id === 2 && <Badge style={{ flexGrow: 0 }} colorPalette={"blue"}>Receita Azul</Badge>}
-                                          {p.renewalDate && <Badge style={{ flexGrow: 0 }} colorPalette="yellow"><FaPrint />{`Renova em ${daysBetween(getCurrentDateYYYYMMDD(), p.renewalDate)} dias`}</Badge>}
+                                          {p.renewalDate && <Badge style={{ flexGrow: 0 }} colorPalette="yellow"><FaPrint />{`Renova em ${daysBetweenNow(p.renewalDate)} dias`}</Badge>}
                                         </Box>
                                         <p>Última Impressão: {formatDate(p.lastPrinted)}</p>
                                         <p>Renovação: {p.renewal} dias</p>

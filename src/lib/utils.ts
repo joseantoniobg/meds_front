@@ -20,8 +20,8 @@ export const getCurrentDateYYYYMMDD = () => {
   return new Date().toDateString().split('T')[0];
 }
 
-export const daysBetween = (date1: string, date2: string): string => {
-  const date1d = new Date(date1);
+export const daysBetweenNow = (date2: string): string => {
+  const date1d = new Date();
   const date2d = new Date(date2);
   const timeDiff = Math.abs(date2d.getTime() - date1d.getTime());
   const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));

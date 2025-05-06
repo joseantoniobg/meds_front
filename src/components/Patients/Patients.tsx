@@ -221,7 +221,7 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
               <h4 style={{ textAlign: "right" }}>Exibindo página {patients.page} - Total: {patients.totalRecords} Pacientes</h4>
               <ItemsPerPage value={size} onChange={setSize} />
             </Box>
-            <Badge colorPalette={"green"} size={"lg"} style={{ marginTop: "-5px" }}><FaKitMedical /> {`${totalMds} Receita(s) Totais(s)`}</Badge>
+            <Badge colorPalette={"green"} size={"lg"} style={{ marginTop: "-5px" }}><FaKitMedical /> {`${totalMds} Receita(s) Listada(s)`}</Badge>
           </Box>
         </div>
         <Accordion.Root collapsible>

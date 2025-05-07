@@ -17,13 +17,15 @@ import styles from "./Patients.module.scss";
 import StNumberInput from "../StNumberInput/StNumberInput";
 
 type Props = {
+  updatePatients?: boolean;
   selectedPatient?: string;
   setSelectedPatient?: (patient: string) => void;
   patientName?: string;
+  setUpdatePatients: (update: boolean) => void;
   setPatientName?: (name: string) => void;
 };
 
-export default function Patients({ selectedPatient, setSelectedPatient, patientName, setPatientName }:Props) {
+export default function Patients({ selectedPatient, setUpdatePatients, setSelectedPatient, patientName, setPatientName, updatePatients }:Props) {
   const [name, setName] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(10);
@@ -44,6 +46,15 @@ export default function Patients({ selectedPatient, setSelectedPatient, patientN
     page: 1,
     size: 10
   });
+
+  useEffect(() => {
+    if (updatePatients) {
+      setName(patientName ?? '');
+      handleRequest();
+    }
+    setUpdatePatients(false);
+  }
+  , [updatePatients]);
 
   const [loading, setLoading] = useState<boolean>(false);
 

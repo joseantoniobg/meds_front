@@ -35,6 +35,7 @@ export default function MedicalPrescriptions() {
   const [idMedicalPrescriptions, setIdMedicalPrescriptions] = useState<string[]>([]);
   const [blue, isBlue] = useState<boolean>(false);
   const [showMeds, setShowMeds] = useState<boolean>(false);
+  const [updatePatients, setUpdatePatients] = useState<boolean>(false);
 
   const handleSelectedPatient = (patient: string) => {
     if (patient === selectedPatient) {
@@ -124,6 +125,7 @@ export default function MedicalPrescriptions() {
     }
 
     setIdMedicalPrescriptions((prev) => [...prev, res.data.id]);
+    setUpdatePatients(true);
   }
 
   const handlePrint = async () => {
@@ -164,7 +166,7 @@ export default function MedicalPrescriptions() {
               <Box padding={"7px"} style={{border: "1px solid #222", borderRadius: "8px"}}>
                 <Box className={styles.scrollable} style={{ height: showMeds ? "380px" : "700px", overflowY: "scroll", "overflowX": "hidden", padding: "20px" }}>
                   <Box marginTop={"-30px"}>
-                    <Patients selectedPatient={selectedPatient} setSelectedPatient={handleSelectedPatient} setPatientName={setPatientName} />
+                    <Patients setUpdatePatients={setUpdatePatients} updatePatients={updatePatients} selectedPatient={selectedPatient} setSelectedPatient={handleSelectedPatient} setPatientName={setPatientName} />
                   </Box>
                 </Box>
               </Box>

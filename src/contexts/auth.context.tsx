@@ -7,6 +7,10 @@ interface User {
   name: string;
   login: string;
   token: string;
+  colorPallete: "orange" | "teal" | "gray" | "blue" | "green" | "red" | "yellow" | "purple" | "pink" | "cyan" | undefined;
+  setColorPallete: (color: string) => void;
+  colorPalletes: string[];
+  theme: "light" | "dark" | undefined;
 }
 
 interface AuthContextType {
@@ -14,6 +18,9 @@ interface AuthContextType {
   login: (userData: User) => void;
   logout: () => void;
   theme: "light" | "dark" | undefined;
+  colorPallete: string;
+  setColorPallete: (color: string) => void;
+  colorPalletes: string[];
   toggleTheme: () => void;
 }
 
@@ -35,6 +42,9 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [theme, setTheme] = useState<"light" | "dark" | undefined>("dark");
+  const [colorPallete, setColorPallete] = useState<string>("teal");
+
+  const colorPalletes = ["orange", "teal", "gray", "blue", "green", "red", "yellow", "purple", "pink", "cyan"];
 
   useEffect(() => {
     const persisted = localStorage.getItem("user");
@@ -60,7 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, theme, toggleTheme }}>
+    <AuthContext.Provider value={{ user, login, logout, theme, toggleTheme, colorPallete, setColorPallete, colorPalletes }}>
       {children}
     </AuthContext.Provider>
   );

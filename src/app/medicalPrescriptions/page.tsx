@@ -209,36 +209,38 @@ export default function MedicalPrescriptions() {
                   <Step step={2} title="Informe as medicações e formas de uso" checked={medications.some((m) => m.instructionOfUse !== '' && m.quantity !== '')} />
                   <StepBox>
                   <h3>Medicações:</h3>
-                  <Table.Root key={"patientsTable"} size="sm" variant={"outline"}>
-                    <Table.Header>
-                      <Table.Row>
-                          <Table.ColumnHeader key="medicamento">
-                            Medicamento
-                          </Table.ColumnHeader>
-                          <Table.ColumnHeader key="qtd">
-                            Quantidade
-                          </Table.ColumnHeader>
-                          <Table.ColumnHeader key="uso">
-                            Instruções
-                          </Table.ColumnHeader>
-                          <Table.ColumnHeader key="acoes">
-                            Ações
-                          </Table.ColumnHeader>
-                      </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                    {medications.map((med, index) => (
-                      <Table.Row key={med.id}>
-                        <Table.Cell>{med.name}</Table.Cell>
-                        <Table.Cell><StInput id={`${index}a`} value={med.quantity} onChange={(e) => alterMedData(med.id, e.target.value, med.instructionOfUse)} placeholder="Quantidade..." label="" /></Table.Cell>
-                        <Table.Cell><StTextArea id={`${index}b`} value={med.instructionOfUse} onChange={(e) => alterMedData(med.id, med.quantity, e.target.value)}  placeholder="Forma de Uso..." label="" /></Table.Cell>
-                        <Table.Cell>
-                          <CloseButton key={med.id+"rm"} colorPalette={"red"} size="sm" onClick={() => removeMed(med.id)} />
-                        </Table.Cell>
-                      </Table.Row>
-                    ))}
-                    </Table.Body>
-                  </Table.Root>
+                  <Box className={`${styles.medsTable} ${styles.scrollable}`}>
+                    <Table.Root key={"patientsTable"} size="sm" variant={"outline"}>
+                      <Table.Header>
+                        <Table.Row>
+                            <Table.ColumnHeader key="medicamento">
+                              Medicamento
+                            </Table.ColumnHeader>
+                            <Table.ColumnHeader key="qtd">
+                              Quantidade
+                            </Table.ColumnHeader>
+                            <Table.ColumnHeader key="uso">
+                              Instruções
+                            </Table.ColumnHeader>
+                            <Table.ColumnHeader key="acoes">
+                              Ações
+                            </Table.ColumnHeader>
+                        </Table.Row>
+                      </Table.Header>
+                      <Table.Body>
+                      {medications.map((med, index) => (
+                        <Table.Row key={med.id}>
+                          <Table.Cell>{med.name}</Table.Cell>
+                          <Table.Cell><StInput id={`${index}a`} value={med.quantity} onChange={(e) => alterMedData(med.id, e.target.value, med.instructionOfUse)} placeholder="Quantidade..." label="" /></Table.Cell>
+                          <Table.Cell><StTextArea id={`${index}b`} value={med.instructionOfUse} onChange={(e) => alterMedData(med.id, med.quantity, e.target.value)}  placeholder="Forma de Uso..." label="" /></Table.Cell>
+                          <Table.Cell>
+                            <CloseButton key={med.id+"rm"} colorPalette={"red"} size="sm" onClick={() => removeMed(med.id)} />
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
+                      </Table.Body>
+                    </Table.Root>
+                  </Box>
                   </StepBox>
                   <StepBox>
                     <Step step={3} title="Informe os dados da receita" checked={initialDate.length === 10} />

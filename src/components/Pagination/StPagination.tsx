@@ -12,7 +12,7 @@ type Props = {
 
 export default function StPagination({ totalRecords, size, setPage, page, siblingCount }: Props) {
   return (
-    <div style={{ display: "flex", justifyContent: "center", paddingTop: "20px" }}>
+    <div style={{ display: "flex", justifyContent: "center", padding: "20px 0" }}>
       <Pagination.Root count={totalRecords} page={page} pageSize={size} defaultPage={1} siblingCount={siblingCount ?? 5}>
         <ButtonGroup variant="ghost" size="sm">
           <Pagination.PrevTrigger asChild>

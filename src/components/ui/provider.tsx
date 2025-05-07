@@ -5,12 +5,15 @@ import {
   ColorModeProvider,
   type ColorModeProviderProps,
 } from "./color-mode"
+import { useAuth } from "@/contexts/auth.context"
 
 export function Provider(props: ColorModeProviderProps) {
+  const { theme, colorPallete } = useAuth();
+
   return (
     <ChakraProvider value={defaultSystem}>
-      <Theme appearance="dark" colorPalette="teal">
-        <ColorModeProvider {...props} />
+      <Theme appearance={theme} colorPalette={colorPallete}>
+        {props.children}
       </Theme>
     </ChakraProvider>
   )

@@ -1,9 +1,10 @@
 "use client";
 
-import { Field, FieldLabel, Input } from "@chakra-ui/react";
+import { Box, Field, FieldLabel, Input } from "@chakra-ui/react";
 import StNavBar from "../Navbar/StNavbar";
 import Login from "@/app/login/page";
 import { useAuth } from "@/contexts/auth.context";
+import styles from "./StPage.module.scss";
 
 interface Props {
   title?: string;
@@ -18,9 +19,9 @@ export default function StPage({ title, children }: Props) {
   }
 
   return (
-    <div>
+    <div style={{ minHeight: "100vh" }}>
       <StNavBar />
-      <div style={{ margin: "20px" }}>
+      <div style={{ margin: "20px", marginBottom: "0px" }}>
         <h1 style={{ marginBottom: '10px' }}>{title}</h1>
         {title && <hr />}
         {children}

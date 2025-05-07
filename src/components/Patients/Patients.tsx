@@ -21,7 +21,7 @@ type Props = {
   selectedPatient?: string;
   setSelectedPatient?: (patient: string) => void;
   patientName?: string;
-  setUpdatePatients: (update: boolean) => void;
+  setUpdatePatients?: (update: boolean) => void;
   setPatientName?: (name: string) => void;
 };
 

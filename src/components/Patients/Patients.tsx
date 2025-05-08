@@ -167,7 +167,7 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
       filters.push(`renewal=${renewal}`);
     }
 
-    if (medicalPrescriptionId !== '') {
+    if (medicalPrescriptionId !== '' && selectedMedicalPrescriptions.length === 0) {
       filters.push(`medicalPrescriptionIds=${medicalPrescriptionId}`);
       setSelectedMedicalPrescriptions([]);
     }

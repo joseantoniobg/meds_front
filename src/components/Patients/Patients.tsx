@@ -155,7 +155,7 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
       filters.push(`patientId=${patientId}`);
     }
 
-    if (selectedMedicalPrescriptions.length > 0) {
+    if (selectedMedicalPrescriptions.length > 0 && medicalPrescriptionId === '') {
       filters.push(`medicalPrescriptionIds=${selectedMedicalPrescriptions.join(',')}`);
     }
 
@@ -167,7 +167,7 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
       filters.push(`renewal=${renewal}`);
     }
 
-    if (medicalPrescriptionId !== '' && selectedMedicalPrescriptions.length === 0) {
+    if (medicalPrescriptionId !== '') {
       filters.push(`medicalPrescriptionIds=${medicalPrescriptionId}`);
       setSelectedMedicalPrescriptions([]);
     }

@@ -2,11 +2,14 @@
 
 import Patients from "@/components/Patients/Patients";
 import StPage from "@/components/StPage/StPage";
+import { useState } from "react";
 
 const PatientsPage: React.FC = () => {
+  const [updatePatients, setUpdatePatients] = useState<boolean>(false);
+
   return (
     <StPage title="Pacientes">
-      <Patients />
+      <Patients updatePatients={updatePatients} setUpdatePatients={setUpdatePatients} />
     </StPage>
   );
 };

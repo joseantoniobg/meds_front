@@ -13,8 +13,9 @@ export async function GET(req: Request) {
     const res = await api.request({
       method: 'GET',
       url: `/medicalPrescriptions/print?${parameters}&page=1&size=10000`,
+      responseType: 'arraybuffer',
       headers: {
-        'Content-Type': 'text/html',
+        'Content-Type': 'application/pdf',
         'Authorization': `Bearer ${sessionUser.token}`,
       },
     });
@@ -23,7 +24,7 @@ export async function GET(req: Request) {
 
     return new NextResponse(html, {
       headers: {
-        'Content-Type': 'text/html',
+        'Content-Type': 'application/pdf',
       },
     });
   } catch (error: AxiosError | unknown) {

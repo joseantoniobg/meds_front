@@ -28,6 +28,7 @@ export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
   const [useMethod, setUseMethod] = useState<string>('');
 
   const dialog = useDialog();
+  const user = useAuth().user;
 
   const [meds, setMeds] = useState<any>({
     content: [],
@@ -146,9 +147,9 @@ export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
       </Box>}
       {!loading && <><div style={{ display: "flex", margin: "10px 0", justifyContent: "space-between", alignItems: "end" }}>
                 <Dialog.RootProvider value={dialog}>
-                  <Dialog.Trigger asChild>
+                  {!user?.readOnly && <Dialog.Trigger asChild>
                     <StButton icon={<FaPlus />} colorPalette="green" label="Medicamento" loading={false} type="button" />
-                  </Dialog.Trigger>
+                  </Dialog.Trigger>}
                   <Portal>
                     <Dialog.Backdrop />
                     <Dialog.Positioner>
@@ -215,7 +216,7 @@ export default function Meds({ selectedMeds, setSelectedMeds }: Props) {
                                               if(setSelectedMeds) setSelectedMeds(med.id, med.name);
                                              }} />}{med.name}</Table.Cell>
                 <Table.Cell>{med.useMethod}</Table.Cell>
-                <Table.Cell><StButton label="" icon={<FaPencil />} colorPalette="blue" loading={false} onClick={() => handleEdit(med.id, med.name, med.useMethod)} type="button" /></Table.Cell>
+                <Table.Cell>{!user?.readOnly && <StButton label="" icon={<FaPencil />} colorPalette="blue" loading={false} onClick={() => handleEdit(med.id, med.name, med.useMethod)} type="button" />}</Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>

@@ -39,6 +39,8 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
   const [lastPrinted, setLastPrinted] = useState<string>('');
   const [totalMds, setTotalMds] = useState<number>(0);
 
+  const user = useAuth().user;
+
   const [patients, setPatients] = useState<any>({
     content: [],
     totalRecords: 0,
@@ -197,9 +199,9 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
         {!loading && <><div style={{ display: "flex", gap: "10px", justifyContent: "space-between", alignItems: "center", marginTop: "10px" }}>
         <div style={{ display: "flex", marginBottom: "10px", justifyContent: "space-between", gap: "10px", alignItems: "center" }}>
             <Dialog.RootProvider value={dialog}>
-              <Dialog.Trigger style={{ marginTop: "15px" }} asChild>
+              {!user?.readOnly && <Dialog.Trigger style={{ marginTop: "15px" }} asChild>
                 <StButton style={{ marginTop: "25px" }} label="Paciente" colorPalette="green" loading={false} type="button" icon={<FaPlus />} />
-              </Dialog.Trigger>
+              </Dialog.Trigger>}
               <Portal>
                 <Dialog.Backdrop />
                 <Dialog.Positioner>
@@ -224,7 +226,7 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
               <Badge colorPalette={"blue"} size={"lg"} style={{ marginLeft: "20px", marginTop: "25px" }}>{`${selectedMedicalPrescriptions.length} Receita(s) Selecionada(s)`}</Badge>
               <StInput rootStyle={{ width: "120px" }} id="date" label="Data de Emissão:" value={date} onChange={(e) => setDate(formatStringDate(e.target.value))} mask="99/99/9999" />
               <StNumberInput style={{ width: "130px" }} value={renewal} setValue={setRenewal} label="Dias Renovação:" />
-              <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} />
+              {!user?.readOnly && <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} />}
             </>
           </div>
           <Box display={"flex"} gap={"10px"} flexDirection={"column"} alignItems={"flex-end"} justifyContent={"center"}>
@@ -247,8 +249,8 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
                               <Span>{patient.name}</Span>
                             <Accordion.ItemIndicator />
                           </Accordion.ItemTrigger>
-                          <StButton label="" icon={<FaPencil />}  loading={false} onClick={() => handleEdit(patient.id, patient.name)} type="button" />
-                          <StButton label="" icon={<FaPrint />}  colorPalette="blue" loading={false} onClick={() => handlePrint(patient.id, '')} type="button" />
+                          {!user?.readOnly && <><StButton label="" icon={<FaPencil />}  loading={false} onClick={() => handleEdit(patient.id, patient.name)} type="button" />
+                          <StButton label="" icon={<FaPrint />}  colorPalette="blue" loading={false} onClick={() => handlePrint(patient.id, '')} type="button" /></>}
                         </Box>
                         <Accordion.ItemContent>
                             {patient.prescriptions.length === 0 && <p style={{margin: "30px" }}>Paciente sem receitas</p>}
@@ -297,10 +299,10 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
                                       </Table.Root>
                                   </Card.Body>
                                   <Card.Footer justifyContent="flex-end">
-                                    <ConfirmDialog keyName={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
+                                    {!user?.readOnly && <><ConfirmDialog keyName={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
                                       <StButton key={p.id + 'btnCancel'} icon={<FaBan />} label="Cancelar" loading={loading} colorPalette={"red"} onClick={() => {}} />
                                     </ConfirmDialog>
-                                    <StButton key={p.id + 'btnPrint'} style={{ marginTop: "12px" }} label="Imprimir" loading={false} icon={<FaPrint />} onClick={() => handlePrint('', p.id)} />
+                                    <StButton key={p.id + 'btnPrint'} style={{ marginTop: "12px" }} label="Imprimir" loading={false} icon={<FaPrint />} onClick={() => handlePrint('', p.id)} /></>}
                                   </Card.Footer>
                               </Card.Root>))}
                             </Box>}

@@ -6,6 +6,7 @@ interface User {
   id: string;
   name: string;
   login: string;
+  readOnly: boolean;
   token: string;
   colorPallete: "orange" | "teal" | "gray" | "blue" | "green" | "red" | "yellow" | "purple" | "pink" | "cyan" | undefined;
   setColorPallete: (color: string) => void;

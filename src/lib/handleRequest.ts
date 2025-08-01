@@ -8,8 +8,6 @@ export default async function performRequest(method: string, url: string, header
 
     const data = await res.json();
 
-    console.log("Response data:", data);
-
     const status = res.status;
 
     if (res.status >= 200 && res.status < 300) {

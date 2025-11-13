@@ -38,6 +38,7 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
   const [renewalDate, setRenewalDate] = useState<string>('');
   const [lastPrinted, setLastPrinted] = useState<string>('');
   const [totalMds, setTotalMds] = useState<number>(0);
+  const [printOnePerA4, setPrintOnePerA4] = useState<boolean>(false);
 
   const user = useAuth().user;
 
@@ -169,6 +170,8 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
       filters.push(`renewal=${renewal}`);
     }
 
+    filters.push(`layout=${printOnePerA4 ? 'A4' : 'standard'}`);
+
     if (medicalPrescriptionId !== '') {
       filters.push(`medicalPrescriptionIds=${medicalPrescriptionId}`);
       setSelectedMedicalPrescriptions([]);
@@ -226,6 +229,7 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
               <Badge colorPalette={"blue"} size={"lg"} style={{ marginLeft: "20px", marginTop: "25px" }}>{`${selectedMedicalPrescriptions.length} Receita(s) Selecionada(s)`}</Badge>
               <StInput rootStyle={{ width: "120px" }} id="date" label="Data de Emissão:" value={date} onChange={(e) => setDate(formatStringDate(e.target.value))} mask="99/99/9999" />
               <StNumberInput style={{ width: "130px" }} value={renewal} setValue={setRenewal} label="Dias Renovação:" />
+              <StCheckBox label="A4 Inteira" value={printOnePerA4} setValue={setPrintOnePerA4} marginTop="20px"/>
               {!user?.readOnly && <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} />}
             </>
           </div>

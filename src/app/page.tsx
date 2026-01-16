@@ -13,7 +13,7 @@ export default function Home() {
         <Heading style={{ fontFamily: "monospace", fontSize: "32px" }}>Bem-vindo!</Heading>
         <Blockquote.Root>
           <Blockquote.Content>
-          {!user?.readOnly && <p style={{ width: "400px", fontSize: "18px", textAlign: "left" }}>Amor, saiba que fiz esse sistema especialmente pra você, pode não ter ficado perfeito (principalmente as telas rsrs) mas fiz de coração. Espero que ajude muito no seu dia a dia!</p>}
+          {!user?.readOnly && <p style={{ width: "400px", fontSize: "18px", textAlign: "left" }}>Um ano de muitos juntos! Amor, saiba que fiz esse sistema especialmente pra você, pode não ter ficado perfeito (principalmente as telas rsrs) mas fiz de coração. Espero que ajude muito no seu dia a dia!</p>}
           {user?.readOnly && <p style={{ width: "400px", fontSize: "18px", textAlign: "left" }}>Seu usuário somente visualiza os dados presentes nesse sistema. Os dados presentes são sensíveis e estão seguindo as normas e regulações da LGPD. Somente pessoas autorizadas podem acessar. Nunca repasse a senha ou usuário a terceiros ou desconhecidos. O sistema loga todos os acessos realizados. Use com ética e responsabilidade.</p>}
           </Blockquote.Content>
         </Blockquote.Root>

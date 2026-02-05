@@ -2,7 +2,7 @@ import { useAuth } from "@/contexts/auth.context";
 import performRequest from "@/lib/handleRequest";
 import { useEffect, useState } from "react";
 import { toaster } from "../ui/toaster";
-import { Accordion, Avatar, Badge, Box, Button, Card, Checkbox, CloseButton, Dialog, Portal, Span, Spinner, Table, useDialog } from "@chakra-ui/react";
+import { Accordion, Avatar, Badge, Box, Button, Card, Checkbox, CloseButton, Dialog, Field, NativeSelect, Portal, Span, Spinner, Table, useDialog } from "@chakra-ui/react";
 import StForm from "../Form/StForm";
 import StInput from "../Input/StInput";
 import StButton from "../Button/StButton";
@@ -187,6 +187,20 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
     setRenewal(0);
   }
 
+  const handleUpdateType = async (id: string, prescriptionType: number) => {
+    const res = await performRequest("PATCH", `/api/mps/type`, {
+      "Content-Type": "application/json",
+    }, setLoading,
+    `Tipo da receita atualizado com sucesso`,
+    toaster,
+    logout,
+    {
+      id,
+      prescriptionType,
+    });
+    handleRequest();
+  }
+
   return (
     <Box display={"contents"}>
       <StForm horizontal label="" icon={<FaSearch />}  onClick={() => page != 1 ? setPage(1) : handleRequest()} loading={loading}>
@@ -258,7 +272,8 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
                         </Box>
                         <Accordion.ItemContent>
                             {patient.prescriptions.length === 0 && <p style={{margin: "30px" }}>Paciente sem receitas</p>}
-                            {patient.prescriptions.some((p) => p.type.id === 2) && <Badge style={{ marginLeft: "10px" }} size={"lg"} colorPalette={"yellow"}><FaVirusCovid/> Atenção: Paciente com Receita Azul</Badge>}
+                            {patient.prescriptions.some((p) => p.type.id === 2) && <Badge style={{ marginLeft: "10px" }} size={"lg"} colorPalette={"blue"}><FaVirusCovid/> Atenção: Paciente com Receita Azul</Badge>}
+                            {patient.prescriptions.some((p) => p.type.id === 3) && <Badge style={{ marginLeft: "10px" }} size={"lg"} colorPalette={"yellow"}><FaVirusCovid/> Atenção: Paciente com Receita Amarela</Badge>}
                             {patient.prescriptions.length > 0 && <Box className={styles.mps}>
                                 {patient.prescriptions.map((p, index: number) => (<Card.Root key={p.id}>
                                   <Card.Body gap="2">
@@ -272,7 +287,8 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
                                         <Box display="flex" gap="10px" alignItems="center">
                                           <Badge style={{ flexGrow: 0 }} colorPalette={p.status.id === 1 ? "green" : "red"}>{p.status.description}</Badge>
                                           {p.type.id === 2 && <Badge style={{ flexGrow: 0 }} colorPalette={"blue"}>Receita Azul</Badge>}
-                                          {p.renewalDate && <Badge style={{ flexGrow: 0 }} colorPalette="yellow"><FaPrint />{`Renova em ${daysBetweenNow(p.renewalDate)} dias`}</Badge>}
+                                          {p.type.id === 3 && <Badge style={{ flexGrow: 0 }} colorPalette={"yellow"}>Receita Amarela</Badge>}
+                                          {p.renewalDate && <Badge style={{ flexGrow: 0 }} colorPalette="orange"><FaPrint />{`Renova em ${daysBetweenNow(p.renewalDate)} dias`}</Badge>}
                                         </Box>
                                         <p>Última Impressão: {formatDate(p.lastPrinted)}</p>
                                         <p>Renovação: {p.renewal} dias</p>
@@ -302,11 +318,24 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
                                         </Table.Body>
                                       </Table.Root>
                                   </Card.Body>
-                                  <Card.Footer justifyContent="flex-end">
-                                    {!user?.readOnly && <><ConfirmDialog keyName={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
-                                      <StButton key={p.id + 'btnCancel'} icon={<FaBan />} label="Cancelar" loading={loading} colorPalette={"red"} onClick={() => {}} />
-                                    </ConfirmDialog>
-                                    <StButton key={p.id + 'btnPrint'} style={{ marginTop: "12px" }} label="Imprimir" loading={false} icon={<FaPrint />} onClick={() => handlePrint('', p.id)} /></>}
+                                  <Card.Footer justifyContent="space-between">
+                                    {!user?.readOnly && <Field.Root style={{ width: "140px" }}>
+                                      <Field.Label style={{ fontSize: "12px" }}>Tipo:</Field.Label>
+                                      <NativeSelect.Root size="sm">
+                                        <NativeSelect.Field value={p.type.id} onChange={(e) => handleUpdateType(p.id, Number(e.target.value))}>
+                                          <option value={1}>Padrão</option>
+                                          <option value={2}>Azul</option>
+                                          <option value={3}>Amarela</option>
+                                        </NativeSelect.Field>
+                                        <NativeSelect.Indicator />
+                                      </NativeSelect.Root>
+                                    </Field.Root>}
+                                    {!user?.readOnly && <Box display="flex" gap="10px">
+                                      <ConfirmDialog keyName={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
+                                        <StButton key={p.id + 'btnCancel'} icon={<FaBan />} label="Cancelar" loading={loading} colorPalette={"red"} onClick={() => {}} />
+                                      </ConfirmDialog>
+                                      <StButton key={p.id + 'btnPrint'} style={{ marginTop: "12px" }} label="Imprimir" loading={false} icon={<FaPrint />} onClick={() => handlePrint('', p.id)} />
+                                    </Box>}
                                   </Card.Footer>
                               </Card.Root>))}
                             </Box>}

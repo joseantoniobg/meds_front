@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/auth.context";
 import performRequest from "@/lib/handleRequest";
 import { useEffect, useRef, useState } from "react";
 import { toaster } from "@/components/ui/toaster";
-import { Badge, Box, CloseButton, createListCollection, Dialog, Field, NumberInput, Portal, Select, Table, useDialog, useSelect } from "@chakra-ui/react";
+import { Badge, Box, CloseButton, createListCollection, Dialog, Field, NativeSelect, NumberInput, Portal, Select, Table, useDialog, useSelect } from "@chakra-ui/react";
 import StForm from "@/components/Form/StForm";
 import StInput from "@/components/Input/StInput";
 import Patients from "@/components/Patients/Patients";
@@ -19,7 +19,6 @@ import { FaBookMedical, FaEye, FaEyeDropper, FaPrint, FaReceipt, FaRegWindowClos
 import { FaEyeLowVision, FaFloppyDisk, FaTrashCan } from "react-icons/fa6";
 import styles from "./MedicalPrescriptions.module.scss";
 import StNumberInput from "@/components/StNumberInput/StNumberInput";
-import { StCheckBox } from "@/components/StCheckBox/StCheckBox";
 import { StTextArea } from "@/components/TextArea/StTextArea";
 
 export default function MedicalPrescriptions() {
@@ -33,7 +32,7 @@ export default function MedicalPrescriptions() {
   const [medications, setMedications] = useState<{ id: string, name: string, quantity: string, instructionOfUse: string }[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [idMedicalPrescriptions, setIdMedicalPrescriptions] = useState<string[]>([]);
-  const [blue, isBlue] = useState<boolean>(false);
+  const [prescriptionType, setPrescriptionType] = useState<number>(1);
   const [showMeds, setShowMeds] = useState<boolean>(false);
   const [updatePatients, setUpdatePatients] = useState<boolean>(false);
 
@@ -117,7 +116,7 @@ export default function MedicalPrescriptions() {
         initialDate: formatStringDateToISO(initialDate),
         renewal,
         medicines: medications,
-        blue,
+        prescriptionType,
       });
 
     if (res.status !== 200) {
@@ -249,7 +248,17 @@ export default function MedicalPrescriptions() {
                     <Box display={"flex"} flexDirection={"row"} alignItems={"flex-start"} justifyContent={"center"} gap={"20px"}>
                       <StInput rootStyle={{ width: "120px" }} id="date" label="Data de Emissão:" value={initialDate} onChange={(e) => setInitialDate(formatStringDate(e.target.value))} mask="99/99/9999" />
                       <StNumberInput style={{ maxWidth: "120px" }} value={renewal} setValue={setRenewal} label="Dias renovação:" />
-                      <StCheckBox marginTop="35px" label="Receita Azul" value={blue} setValue={isBlue} />
+                      <Field.Root style={{ marginTop: "10px", width: "150px" }}>
+                        <Field.Label>Tipo de Receita:</Field.Label>
+                        <NativeSelect.Root>
+                          <NativeSelect.Field value={prescriptionType} onChange={(e) => setPrescriptionType(Number(e.target.value))}>
+                            <option value={1}>Padrão</option>
+                            <option value={2}>Azul</option>
+                            <option value={3}>Amarela</option>
+                          </NativeSelect.Field>
+                          <NativeSelect.Indicator />
+                        </NativeSelect.Root>
+                      </Field.Root>
                     </Box>
                   </StepBox>
                 </Box>

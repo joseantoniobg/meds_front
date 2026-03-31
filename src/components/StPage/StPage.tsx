@@ -19,13 +19,13 @@ export default function StPage({ title, children }: Props) {
   }
 
   return (
-    <div style={{ minHeight: "100vh" }}>
+    <Box minHeight="100vh" bg="bg">
       <StNavBar />
       <div style={{ margin: "20px", marginBottom: "0px" }}>
         <h1 style={{ marginBottom: '10px' }}>{title}</h1>
         {title && <hr />}
         {children}
       </div>
-    </div>
+    </Box>
   );
 }

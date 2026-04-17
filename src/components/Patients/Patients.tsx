@@ -244,7 +244,7 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
               <StInput rootStyle={{ width: "120px" }} id="date" label="Data de Emissão:" value={date} onChange={(e) => setDate(formatStringDate(e.target.value))} mask="99/99/9999" />
               <StNumberInput style={{ width: "130px" }} value={renewal} setValue={setRenewal} label="Dias Renovação:" />
               <StCheckBox label="A4 Inteira" value={printOnePerA4} setValue={setPrintOnePerA4} marginTop="20px"/>
-              {!user?.readOnly && <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} />}
+              <StButton label="" icon={<FaPrint />} loading={false} style={{ marginTop: "24px" }} type="button" onClick={() => handlePrint('', '')} disabled={selectedMedicalPrescriptions.length === 0} />
             </>
           </div>
           <Box display={"flex"} gap={"10px"} flexDirection={"column"} alignItems={"flex-end"} justifyContent={"center"}>
@@ -267,8 +267,8 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
                               <Span>{patient.name}</Span>
                             <Accordion.ItemIndicator />
                           </Accordion.ItemTrigger>
-                          {!user?.readOnly && <><StButton label="" icon={<FaPencil />}  loading={false} onClick={() => handleEdit(patient.id, patient.name)} type="button" />
-                          <StButton label="" icon={<FaPrint />}  colorPalette="blue" loading={false} onClick={() => handlePrint(patient.id, '')} type="button" /></>}
+                          {!user?.readOnly && <StButton label="" icon={<FaPencil />} loading={false} onClick={() => handleEdit(patient.id, patient.name)} type="button" />}
+                          <StButton label="" icon={<FaPrint />} colorPalette="blue" loading={false} onClick={() => handlePrint(patient.id, '')} type="button" />
                         </Box>
                         <Accordion.ItemContent>
                             {patient.prescriptions.length === 0 && <p style={{margin: "30px" }}>Paciente sem receitas</p>}
@@ -330,12 +330,12 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
                                         <NativeSelect.Indicator />
                                       </NativeSelect.Root>
                                     </Field.Root>}
-                                    {!user?.readOnly && <Box display="flex" gap="10px">
-                                      <ConfirmDialog keyName={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
+                                    <Box display="flex" gap="10px">
+                                      {!user?.readOnly && <ConfirmDialog keyName={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
                                         <StButton key={p.id + 'btnCancel'} icon={<FaBan />} label="Cancelar" loading={loading} colorPalette={"red"} onClick={() => {}} />
-                                      </ConfirmDialog>
+                                      </ConfirmDialog>}
                                       <StButton key={p.id + 'btnPrint'} style={{ marginTop: "12px" }} label="Imprimir" loading={false} icon={<FaPrint />} onClick={() => handlePrint('', p.id)} />
-                                    </Box>}
+                                    </Box>
                                   </Card.Footer>
                               </Card.Root>))}
                             </Box>}

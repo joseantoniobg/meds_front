@@ -11,7 +11,7 @@ import { daysBetweenNow, formatDate, formatStringDate, formatStringDateToISO, ge
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import { StCheckBox } from "../StCheckBox/StCheckBox";
 import { FaAt, FaBan, FaCalendarTimes, FaPlus, FaPrint, FaSearch } from "react-icons/fa";
-import { FaKitMedical, FaPencil, FaVirusCovid, FaVirusCovidSlash } from "react-icons/fa6";
+import { FaArrowRotateLeft, FaKitMedical, FaPencil, FaVirusCovid, FaVirusCovidSlash } from "react-icons/fa6";
 import ItemsPerPage from "../ItemsPerPage/ItemsPerPage";
 import styles from "./Patients.module.scss";
 import StNumberInput from "../StNumberInput/StNumberInput";
@@ -148,6 +148,17 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
       id,
       name: newName
     });
+    handleRequest();
+  }
+
+  const handleReactivate = async (id: string) => {
+    await performRequest("PATCH", `/api/mps/reactivate`, {
+      "Content-Type": "application/json",
+    }, setLoading,
+    `Receita reativada com sucesso`,
+    toaster,
+    logout,
+    { id });
     handleRequest();
   }
 
@@ -331,8 +342,11 @@ export default function Patients({ selectedPatient, setUpdatePatients, setSelect
                                       </NativeSelect.Root>
                                     </Field.Root>}
                                     <Box display="flex" gap="10px">
-                                      {!user?.readOnly && <ConfirmDialog keyName={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
+                                      {!user?.readOnly && p.status.id === 1 && <ConfirmDialog keyName={p.id + 'dia'} handleConfirm={() => handleCancel(p.id)} title="Cancelar Receita" question="Deseja realmente cancelar a receita?" loading={loading}>
                                         <StButton key={p.id + 'btnCancel'} icon={<FaBan />} label="Cancelar" loading={loading} colorPalette={"red"} onClick={() => {}} />
+                                      </ConfirmDialog>}
+                                      {!user?.readOnly && p.status.id === 0 && <ConfirmDialog keyName={p.id + 'reactivate'} handleConfirm={() => handleReactivate(p.id)} title="Reativar Receita" question="Deseja reativar a receita? A data de renovação será recalculada." loading={loading}>
+                                        <StButton key={p.id + 'btnReactivate'} icon={<FaArrowRotateLeft />} label="Reativar" loading={loading} colorPalette={"green"} onClick={() => {}} />
                                       </ConfirmDialog>}
                                       <StButton key={p.id + 'btnPrint'} style={{ marginTop: "12px" }} label="Imprimir" loading={false} icon={<FaPrint />} onClick={() => handlePrint('', p.id)} />
                                     </Box>

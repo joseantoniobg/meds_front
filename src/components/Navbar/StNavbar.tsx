@@ -73,6 +73,7 @@ export default function StNavBar() {
       { name: 'Receitas',
         href: '/medicalPrescriptions',
       },
+      ...(user && !user.readOnly ? [{ name: 'Configurações', href: '/settings' }] : []),
     { name: 'Sair',
       href: '',
       onClick: logout }];

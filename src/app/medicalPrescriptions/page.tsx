@@ -23,7 +23,8 @@ import { StTextArea } from "@/components/TextArea/StTextArea";
 import { StCheckBox } from "@/components/StCheckBox/StCheckBox";
 
 export default function MedicalPrescriptions() {
-  const { logout, user } = useAuth();
+  const { logout, user, settings } = useAuth();
+  const printRestricted = !!(user?.readOnly && settings?.restrictReadOnlyPrint);
 
   const [selectedPatient, setSelectedPatient] = useState<string>("");
   const [patientName, setPatientName] = useState<string>("");
@@ -185,12 +186,12 @@ export default function MedicalPrescriptions() {
               <StButton style={{ marginTop: "15px" }} colorPalette={"cyan"} icon={showMeds ? <FaEyeLowVision /> : <FaEye />} label={`${!showMeds ? 'Exibir' : 'Ocultar'} Medicamentos`} loading={false} onClick={() => setShowMeds(!showMeds)} type="button" />
               <Box display={"flex"} gap={"10px"} alignItems={"center"}>
                 <StCheckBox label="A4 Inteira" value={printOnePerA4} setValue={setPrintOnePerA4} marginTop="0px" />
-                <ConfirmDialog keyName="confirmConference" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Conferência de Receitas" question="Deseja conferir as receitas do dia?" >
+                {!printRestricted && <ConfirmDialog keyName="confirmConference" handleConfirm={() => handleDailyPrint(false)} loading={loading} title="Conferência de Receitas" question="Deseja conferir as receitas do dia?" >
                   <StButton colorPalette={"blue"} icon={<FaEyeDropper />} label="Conferir Receitas do Dia" loading={false} />
-                </ConfirmDialog>
-                <ConfirmDialog keyName="printDaily" handleConfirm={() => handleDailyPrint(true)} loading={loading} title="Impresso de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
+                </ConfirmDialog>}
+                {!printRestricted && <ConfirmDialog keyName="printDaily" handleConfirm={() => handleDailyPrint(true)} loading={loading} title="Impresso de Receitas" question="Deseja imprimir as receitas do dia? Essa ação não pode ser executada novamente!" >
                   <StButton colorPalette={"orange"} icon={<FaBookMedical />} label="Imprimir Receitas do Dia" loading={false} />
-                </ConfirmDialog>
+                </ConfirmDialog>}
               </Box>
             </Box>
           </Box>
@@ -273,7 +274,7 @@ export default function MedicalPrescriptions() {
                 {!user?.readOnly && <ConfirmDialog keyName="confirm" handleConfirm={handleSave} loading={loading} title="Salvar Receita" question="Deseja salvar a receita?" >
                   <StButton colorPalette="green" icon={<FaFloppyDisk />} label="Salvar" loading={loading} type="button" />
                 </ConfirmDialog>}
-                <StButton style={{ marginTop: "12px" }} colorPalette="blue" icon={<FaPrint />} label="Imprimir" loading={loading} onClick={handlePrint} type="button" />
+                {!printRestricted && <StButton style={{ marginTop: "12px" }} colorPalette="blue" icon={<FaPrint />} label="Imprimir" loading={loading} onClick={handlePrint} type="button" />}
               </Box>
             </Box>
           </Box>

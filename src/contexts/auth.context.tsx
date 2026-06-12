@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { performRequestSimple } from "@/lib/handleRequest";
 
 interface User {
   id: string;
@@ -14,6 +15,10 @@ interface User {
   theme: "light" | "dark" | undefined;
 }
 
+interface Settings {
+  restrictReadOnlyPrint: boolean;
+}
+
 interface AuthContextType {
   user: User | null;
   login: (userData: User) => void;
@@ -23,6 +28,8 @@ interface AuthContextType {
   setColorPallete: (color: string) => void;
   colorPalletes: string[];
   toggleTheme: () => void;
+  settings: Settings | null;
+  refreshSettings: () => Promise<void>;
 }
 
 // Create the context with default values
@@ -44,12 +51,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [theme, setTheme] = useState<"light" | "dark" | undefined>("dark");
   const [colorPallete, setColorPallete] = useState<string>("teal");
+  const [settings, setSettings] = useState<Settings | null>(null);
 
   const colorPalletes = ["orange", "teal", "gray", "blue", "green", "red", "yellow", "purple", "pink", "cyan"];
+
+  const refreshSettings = async () => {
+    const { data, status } = await performRequestSimple("GET", "/api/settings", {
+      "Content-Type": "application/json",
+    });
+
+    if (status >= 200 && status < 300) setSettings(data);
+  };
 
   useEffect(() => {
     const persisted = localStorage.getItem("user");
     if (persisted) setUser(JSON.parse(persisted));
+    refreshSettings();
   }, []);
 
   useEffect(() => {
@@ -71,7 +88,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, theme, toggleTheme, colorPallete, setColorPallete, colorPalletes }}>
+    <AuthContext.Provider value={{ user, login, logout, theme, toggleTheme, colorPallete, setColorPallete, colorPalletes, settings, refreshSettings }}>
       {children}
     </AuthContext.Provider>
   );

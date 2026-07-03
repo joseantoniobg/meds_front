@@ -1,102 +1,170 @@
-"use client"; // Ensure this is added to mark the file as a client component
+"use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Input, Button, Box, Heading, Field, FieldLabel, useEditable } from "@chakra-ui/react";
-import { toaster } from "@/components/ui/toaster"
-import { useAuth } from "@/contexts/auth.context";
-import StInput from "@/components/Input/StInput";
-import StForm from "@/components/Form/StForm";
-import performRequest, { performRequestSimple } from "@/lib/handleRequest";
-import ReCAPTCHA from "react-google-recaptcha";
+import { useEffect, useRef } from "react";
+import { Box, Heading, Text } from "@chakra-ui/react";
 
-const Login: React.FC = () => {
-  const [recaptchaValue, setRecaptchaValue] = useState(null);
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const { login, logout } = useAuth();
-  const router = useRouter();
+type Particle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  alpha: number;
+  color: string;
+};
 
-  const enableRecaptcha = process.env.NEXT_PUBLIC_ENABLE_RECAPTCHA === "true";
+type Rocket = {
+  x: number;
+  y: number;
+  vy: number;
+  targetY: number;
+  color: string;
+};
 
-  const recaptchaValidation = async () => {
-    return await performRequestSimple("POST", "/api/recaptcha", {
-      "Content-Type": "application/json",
-    }, {
-      recaptcha: recaptchaValue,
-    });
-  }
+const COLORS = ["#ff5252", "#ffd740", "#69f0ae", "#40c4ff", "#e040fb", "#ff6e40", "#ffffff"];
 
-  const handleLogin = async () => {
-    setLoading(true);
-    if (username && password) {
+const Fireworks: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-      if (enableRecaptcha) {
-        const validRecaptcha = await recaptchaValidation();
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-        if (!validRecaptcha || validRecaptcha.data.ok === false) {
-          toaster.create({
-            title: "Erro",
-            description: "Recaptcha inválido",
-            type: "error",
-            duration: 1500,
-          })
-          setLoading(false);
-          return;
+    let animationId: number;
+    const particles: Particle[] = [];
+    const rockets: Rocket[] = [];
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const launch = () => {
+      rockets.push({
+        x: canvas.width * (0.1 + Math.random() * 0.8),
+        y: canvas.height,
+        vy: -(6 + Math.random() * 4),
+        targetY: canvas.height * (0.15 + Math.random() * 0.35),
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      });
+    };
+
+    const explode = (rocket: Rocket) => {
+      const count = 40 + Math.floor(Math.random() * 40);
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count;
+        const speed = 1 + Math.random() * 4;
+        particles.push({
+          x: rocket.x,
+          y: rocket.y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          alpha: 1,
+          color: rocket.color,
+        });
+      }
+    };
+
+    const interval = setInterval(launch, 800);
+    launch();
+
+    const tick = () => {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.globalCompositeOperation = "source-over";
+
+      for (let i = rockets.length - 1; i >= 0; i--) {
+        const r = rockets[i];
+        r.y += r.vy;
+        ctx.fillStyle = r.color;
+        ctx.fillRect(r.x - 1, r.y, 2, 8);
+        if (r.y <= r.targetY) {
+          explode(r);
+          rockets.splice(i, 1);
         }
       }
 
-      const res = await performRequest("POST", "/api/auth", {
-        "Content-Type": "application/x-www-form-urlencoded",
-      }, setLoading,
-      "Login realizado com sucesso",
-      toaster,
-      logout, {
-        client_id: username,
-        client_secret: password,
-        grant_type: "client_credentials",
-      });
-
-      if (res.status === 200) {
-        login(res.data);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.03;
+        p.alpha -= 0.012;
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fill();
       }
-    } else {
-      toaster.create({
-        title: "Erro",
-        description: "Usuário ou senha inválidos",
-        type: "error",
-        duration: 1500,
-      })
-    }
-    setLoading(false);
-  };
+      ctx.globalAlpha = 1;
+
+      animationId = requestAnimationFrame(tick);
+    };
+    tick();
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      clearInterval(interval);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
 
   return (
-    <Box display={"flex"}
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: "fixed",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        pointerEvents: "none",
+      }}
+    />
+  );
+};
+
+const Login: React.FC = () => {
+  return (
+    <Box
+      display={"flex"}
       alignItems={"center"}
       height={"100vh"}
-      justifyContent={"center"}>
+      justifyContent={"center"}
+    >
+      <Fireworks />
       <Box
         display="flex"
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
-        width="300px"
+        maxWidth="800px"
+        textAlign="center"
         p={4}
+        gap={6}
+        zIndex={1}
       >
-        <Heading as="h1" size="2xl" mb={6}>
-          Login
-        </Heading>
-        <StForm label="Entrar" onClick={handleLogin} loading={loading}>
-          <StInput id="username" label="Usuário" style={{ marginBottom: "15px" }} value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Digite seu usuário" />
-          <StInput id="password" label="Senha" value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Digite sua senha" />
-          {enableRecaptcha && <ReCAPTCHA style={{ marginTop: "20px" }}
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-            onChange={setRecaptchaValue}
-          />}
-          <div style={{ marginTop: "20px" }}></div>
-        </StForm>
+        <Text fontSize="3xl">
+          O MEDS está permanentemente <span style={{ color: "red" }}>decomissionado</span> a partir de 02/07/2026.
+          Essa ação é irreversível. Boa sorte a todos que participaram do seu
+          uso e desenvolvimento.
+        </Text>
+        <Text fontSize="lg">
+          Parabéns pela sua conquista meu amor! Espero que o MEDS tenha sido
+          útil durante sua brilhante passagem em Pratápolis. Te amo!
+        </Text>
+        <Text fontSize="sm">
+          Esperamos que quem quer que tome as atividades futuramente tenha a
+          mesma proatividade de criar um sistema para agilizar as milhares de
+          receitas emitidas.
+        </Text>
       </Box>
     </Box>
   );

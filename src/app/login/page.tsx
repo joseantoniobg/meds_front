@@ -152,7 +152,7 @@ const Login: React.FC = () => {
         zIndex={1}
       >
         <Text fontSize="3xl">
-          O MEDS está permanentemente <span style={{ color: "red" }}>decomissionado</span> a partir de 02/07/2026.
+          O MEDS está permanentemente <span style={{ color: "red" }}>descomissionado</span> a partir de 02/07/2026.
           Essa ação é irreversível. Boa sorte a todos que participaram do seu
           uso e desenvolvimento.
         </Text>
